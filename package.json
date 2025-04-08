@@ -1,0 +1,68 @@
+{
+  "name": "armonia",
+  "version": "1.0.0",
+  "description": "Armonia este magazinul tău de încredere pentru instrumente muzicale de calitate. Oferim o gamă variată de instrumente și servicii pentru toți muzicienii.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/M-Podi/Armonia.git"
+  },
+  "keywords": [
+    "instrumente",
+    "muzicale",
+    "online",
+    "cumpără",
+    "chitare",
+    "închiriază",
+    "sintetizator",
+    "reparații",
+    "viori",
+    "lecții",
+    "de",
+    "pian",
+    "magazin",
+    "online",
+    "instrumente",
+    "muzicale",
+    "cumpără",
+    "instrumente",
+    "muzicale",
+    "închiriază",
+    "instrumente",
+    "muzicale",
+    "reparații",
+    "instrumente",
+    "muzicale",
+    "cursuri",
+    "de",
+    "muzică",
+    "online",
+    "accesorii",
+    "instrumente",
+    "muzicale",
+    "piane",
+    "digitale",
+    "chitare",
+    "clasice",
+    "instrumente",
+    "muzicale",
+    "pentru",
+    "începători",
+    "instrumente",
+    "muzicale",
+    "profesionale"
+  ],
+  "author": "Podeanu Matei-Alexandru",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/M-Podi/Armonia/issues"
+  },
+  "homepage": "https://github.com/M-Podi/Armonia#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
+}

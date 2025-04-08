@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armonia - Magazin de Instrumente Muzicale</title>
+    <meta name="author" content="Podeanu Matei-Alexandru">
+    <meta name="keywords"
+        content="instrumente muzicale online, cumpără chitare, închiriază sintetizator, reparații viori, lecții de pian, magazin online instrumente muzicale, cumpără instrumente muzicale, închiriază instrumente muzicale, reparații instrumente muzicale, cursuri de muzică online, accesorii instrumente muzicale, piane digitale, chitare clasice, instrumente muzicale pentru începători, instrumente muzicale profesionale">
+    <meta name="description"
+        content="Armonia este magazinul tău de încredere pentru instrumente muzicale de calitate. Oferim o gamă variată de instrumente și servicii pentru toți muzicienii.">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="public/resources/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="public/resources/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="public/resources/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="public/resources/favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="public/resources/favicon/site.webmanifest" />
+    <link rel="stylesheet" href="public/style.css">
+    <link rel="stylesheet" href="public/printstyle.css">
+    <link rel="stylesheet" href="public/menu.css">
+</head>
+
+<body>
+    <header>
+        <h1>
+            <!-- Icon -->
+            <i class="fas fa-music"></i> Armonia - Magazin de Instrumente Muzicale
+        </h1>
+
+        <nav class="main-nav">
+            <!-- Hamburger checkbox for small screens -->
+            <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox">
+            <label for="menu-toggle" class="menu-toggle-label">
+                <i class="fas fa-bars"></i>
+            </label>
+
+            <ul class="nav-list">
+                <li class="nav-item"><a href="index.html" class="nav-link"><span class="text">Acasă</span><i
+                            class="fas fa-home"></i></a>
+                    <ul class="submenu">
+                        <li class="submenu-item"><a href="#despre-noi" class="submenu-link">Despre noi</a></li>
+                        <li class="submenu-item"><a href="#instrumente" class="submenu-link">Instrumente</a></li>
+                        <li class="submenu-item"><a href="#servicii" class="submenu-link">Servicii</a></li>
+                        <li class="submenu-item"><a href="#oferte" class="submenu-link">Oferte speciale</a></li>
+                        <li class="submenu-item"><a href="#faq" class="submenu-link">Întrebări frecvente</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="#instrumente" class="nav-link">Catalog instrumente</a></li>
+                <li class="nav-item"><a href="#servicii" class="nav-link">Servicii reparații</a></li>
+                <li class="nav-item"><a href="#catalog" class="nav-link">Accesorii</a></li>
+
+                <!-- Second submenu for pages -->
+                <li class="nav-item">
+                    <a href="#" class="nav-link">Pagini</a>
+                    <ul class="submenu">
+                        <li class="submenu-item"><a href="magazin.html" class="submenu-link">Magazin online</a></li>
+                        <li class="submenu-item"><a href="eveniment.html" class="submenu-link">Evenimente</a></li>
+                        <li class="submenu-item"><a href="blog.html" class="submenu-link">Blog muzical</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+
+        <div class="grid-container">
+            <div class="zone zone1">Zona 1: Prezentare (Lorem ipsum dolor sit amet, consectetur adipiscing elit. –
+                F-pattern)
+            </div>
+            <div class="zone zone2">
+                <h3>Cele mai populare instrumente</h3>
+                <div class="table-container">
+                    <table id="popular-instruments">
+                        <thead>
+                            <tr>
+                                <th>Instrument</th>
+                                <th>Categorie</th>
+                                <th>Preț (lei)</th>
+                                <th>Disponibilitate</th>
+                                <th>Rating clienți</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Chitară Acustică Yamaha F310</td>
+                                <td>Coarde</td>
+                                <td>799</td>
+                                <td>În stoc</td>
+                                <td>4.8/5</td>
+                            </tr>
+                            <tr>
+                                <td>Pian Digital Roland FP-30X</td>
+                                <td>Tastatură</td>
+                                <td>3299</td>
+                                <td>La comandă (3-5 zile)</td>
+                                <td>4.9/5</td>
+                            </tr>
+                            <tr>
+                                <td>Vioară Stentor Student II 4/4</td>
+                                <td>Coarde</td>
+                                <td>1250</td>
+                                <td>În stoc</td>
+                                <td>4.5/5</td>
+                            </tr>
+                            <tr>
+                                <td>Saxofon Alto Yamaha YAS-280</td>
+                                <td>Suflat</td>
+                                <td>4399</td>
+                                <td>La comandă (7-10 zile)</td>
+                                <td>4.7/5</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5">Promoție specială: -10% la toate instrumentele Yamaha în perioada 1-15
+                                    Aprilie!</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3">Toate prețurile includ TVA</td>
+                                <td colspan="2">Garanție extinsă disponibilă</td>
+                            </tr>
+                        </tfoot>
+                        <caption>Topul instrumentelor muzicale vândute în 2025</caption>
+                    </table>
+                </div>
+            </div>
+            <div class="zone zone3">Zona 3: Calendar evenimente (Lorem ipsum)</div>
+            <div class="zone zone4">Zona 4: Anunțuri (Lorem ipsum)</div>
+            <div class="zone zone5">Zona 5: Lista utilizatori online (Lorem ipsum)</div>
+            <div class="zone zone6">Zona 6: Date despre utilizator și statistici (Lorem ipsum)</div>
+            <div class="zone zone7">Zona 7: Date despre site și server (Lorem ipsum)</div>
+            <div class="zone zone8">Zona 8: Diverse
+                <section id="despre-noi">
+                    <h2>Despre Armonia</h2>
+
+                    <p><strong>Armonia</strong> este magazinul tău de încredere pentru instrumente muzicale de calitate.
+                    </p>
+
+                    <blockquote>
+                        <q>Muzica este limbajul universal al omenirii.</q><cite> - Henry Wadsworth Longfellow</cite>
+                    </blockquote>
+
+                    <figure>
+                        <picture>
+                            <source media="(max-width: 600px)" srcset="public/resources/HWLsmall.jpeg">
+                            <source media="(max-width: 1024px)" srcset="public/resources/HWLmedium.jpeg">
+                            <img src="public/resources/HWL.jpeg" alt="Henry Wadsworth Longfellow">
+                        </picture>
+                        <figcaption>Henry Wadsworth Longfellow</figcaption>
+                    </figure>
+
+                    <p>Suntem pasionați de muzică și oferim o gamă variată de instrumente muzicale pentru <em>toate
+                            nivelurile
+                            de experiență</em>, de la începători până la profesioniști.</p>
+
+
+
+                    <article>
+                        <h3>Povestea noastră</h3>
+
+                        <p>Fondat în 2010 de către <dfn>luthier</dfn>-ul Adrian Popescu, magazinul nostru a crescut de
+                            la un mic
+                            atelier de reparații la un centru complex dedicat muzicii.</p>
+
+                        <ol>
+                            <li>2010: Deschiderea atelierului de reparații</li>
+                            <li>2012: Extinderea cu primul magazin fizic</li>
+                            <li>2015: Lansarea magazinului online</li>
+                            <li>2018: Deschiderea sălii de cursuri muzicale</li>
+                            <li>2020: <s>Renovarea magazinului central</s> <ins>Inaugurarea noului sediu</ins></li>
+                        </ol>
+                    </article>
+                </section>
+
+                <section id="instrumente">
+                    <h2>Instrumente muzicale</h2>
+
+                    <p>Oferim o gamă completă de instrumente muzicale pentru toate gusturile și bugetele. De la
+                        instrumente
+                        clasice până la cele electronice moderne, găsești totul la <b>Armonia</b>.</p>
+
+                    <section>
+                        <h3>Instrumente cu coarde</h3>
+
+                        <ul>
+                            <li>Chitare acustice și electrice</li>
+                            <li>Viori și viole</li>
+                            <li>Violoncele și contrabași</li>
+                            <li>Ukulele și mandoline</li>
+                        </ul>
+
+
+                    </section>
+
+                    <section>
+                        <h3>Instrumente de suflat</h3>
+                        <ul>
+                            <li>Saxofoane și clarineturi</li>
+                            <li>Flaute și piccolo</li>
+                            <li>Trompete și tromboane</li>
+                            <li>Tube și cornuri</li>
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h3>Instrumente de percuție</h3>
+                        <ul>
+                            <li>Baterii complete și tobe individuale</li>
+                            <li>Cinele și tamburine</li>
+                            <li><i>Cajon</i> și instrumente de percuție etnice</li> <!-- Marcare text idiomatic cu i -->
+                            <li>Xilofoane și marimbe</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section id="servicii">
+                    <h2>Servicii</h2>
+
+                    <p>Pe lângă vânzarea de instrumente, oferim o varietate de servicii pentru a vă ajuta în călătoria
+                        muzicală:
+                    </p>
+
+                    <dl>
+                        <dt>Reparații instrumente</dt>
+                        <dd>Servicii profesionale de reparații și întreținere pentru toate tipurile de instrumente</dd>
+
+                        <dt>Acordaj pian</dt>
+                        <dd>Servicii de acordaj realizate de specialiști cu experiență</dd>
+
+                        <dt>Cursuri muzicale</dt>
+                        <dd>Lecții individuale sau de grup pentru diferite instrumente</dd>
+                        <dd><a href="downloads/madworldsheet.pdf" download>Descarcă prima partitură pentru a exersa</a>
+                        </dd>
+                        <dd>Pentru mai multe partituri, consultați <a href="https://musescore.com/" target="_blank"
+                                rel="noopener noreferrer">portalul Musescore</a>.</dd>
+
+                        <dt><abbr title="Custom Shop Instrumente">CSI</abbr></dt> <!-- Marcare abreviere cu abbr -->
+                        <dd>Realizarea de instrumente personalizate conform specificațiilor clientului</dd>
+                    </dl>
+
+                    <div>
+                        <p>Urmăriți demonstrația serviciilor noastre de reparații:</p>
+                        <iframe id="video-frame" name="video-frame" width="560" height="415"
+                            src="https://www.youtube.com/embed/t7kyoIjHLrQ" title="Video despre reparații instrumente"
+                            allowfullscreen></iframe>
+                        <p>
+                            <a href="https://www.youtube.com/embed/7D1F8vqqT_s" target="video-frame">Video despre
+                                reparații</a>
+                            |
+                            <a href="https://www.youtube.com/embed/xLASuEbSBfg" target="video-frame">Video despre
+                                acordaj
+                                pian</a>
+                        </p>
+                    </div>
+
+                </section>
+
+                <aside id="oferte">
+                    <h2>Oferte speciale</h2>
+
+                    <details>
+                        <summary>Ofertă de sezon: 15% reducere la toate chitarele acustice</summary>
+                        <p>Profită de oferta noastră de vară și beneficiază de 15% reducere la toate chitarele acustice.
+                            Oferta
+                            este valabilă până la data de 31 august.</p>
+                        <p>Codul de reducere: <strong>VARA2023</strong></p>
+                    </details>
+
+                    <details>
+                        <summary>Pachet pentru începători: Chitară + Accesorii</summary>
+                        <p>Pachetul nostru pentru începători include:</p>
+                        <ul>
+                            <li>Chitară acustică</li>
+                            <li>Husă de transport</li>
+                            <li>Set de corzi de rezervă</li>
+                            <li>Tuner electronic</li>
+                            <li>Capo</li>
+                        </ul>
+                        <p>Preț pachet: <s>1200 lei</s> <ins>999 lei</ins></p>
+                    </details>
+
+                    <details>
+                        <summary>Promoție aniversară: 10 ani de Armonia</summary>
+                        <p>Cu ocazia aniversării a 10 ani de existență, oferim:</p>
+                        <ul>
+                            <li>10% reducere la toate produsele din magazin</li>
+                            <li>Verificare gratuită a instrumentelor achiziționate de la noi</li>
+                            <li>Participare la tombola aniversară cu premii muzicale</li>
+                        </ul>
+                    </details>
+                </aside>
+
+                <section id="faq">
+                    <h2>Întrebări frecvente</h2>
+
+                    <details>
+                        <summary>Ce instrumente sunt recomandate pentru începători?</summary>
+                        <p>Pentru începători recomandăm instrumente precum:</p>
+                        <ul>
+                            <li>Ukulele - ușor de învățat, compact și accesibil ca preț</li>
+                            <li>Chitară acustică - versatilă și populară</li>
+                            <li>Pian digital - bun pentru dezvoltarea teoriei muzicale</li>
+                            <li>Flaut dulce - ideal pentru copii</li>
+                        </ul>
+                    </details>
+
+                    <details>
+                        <summary>Oferiți garanție pentru instrumentele vândute?</summary>
+                        <p>Da, toate instrumentele noi beneficiază de garanție standard de 2 ani. Pentru anumite
+                            branduri
+                            premium, perioada de garanție poate fi extinsă până la 5 ani.</p>
+                    </details>
+
+                    <details>
+                        <summary>Cum pot afla care este instrumentul potrivit pentru mine?</summary>
+                        <p>Vă invităm să vizitați magazinul nostru unde consilierii noștri specializați vă pot ghida în
+                            alegerea
+                            instrumentului potrivit în funcție de preferințele, aptitudinile și bugetul dumneavoastră.
+                        </p>
+                    </details>
+
+                    <details>
+                        <summary>Oferiți livrare la domiciliu?</summary>
+                        <p>Da, oferim livrare gratuită pentru comenzile peste 500 lei. Pentru comenzile sub această
+                            valoare,
+                            taxa de livrare este de 20 lei.</p>
+                    </details>
+                </section>
+
+                <section id="formule">
+                    <h2>Relația matematică între frecvență și notă muzicală</h2>
+                    <p>Formula care leagă frecvența unei note muzicale de numărul de semitonuri față de nota La (440 Hz)
+                        este:
+                    </p>
+                    <math xmlns="http://www.w3.org/1998/Math/MathML">
+                        <mi>f</mi>
+                        <mo>=</mo>
+                        <mn>440</mn>
+                        <mo>×</mo>
+                        <msup>
+                            <mn>2</mn>
+                            <mfrac>
+                                <mi>n</mi>
+                                <mn>12</mn>
+                            </mfrac>
+                        </msup>
+                    </math>
+                    <p>unde <i>n</i> reprezintă numărul de semitonuri față de nota La (A4).</p>
+                </section>
+
+                <section id="catalog">
+                    <h2>Catalog instrumente</h2>
+                    <p>Consultați catalogul nostru complet:</p>
+                    <object data="downloads/catalog.pdf" type="application/pdf" width="500" height="500">
+
+                        <p>Browserul dumneavoastră nu poate afișa PDF-uri. <a href="downloads/catalog.pdf">Descărcați
+                                PDF-ul</a> pentru a-l vizualiza.</p>
+                    </object>
+                </section>
+
+                <section id="harta-magazin">
+                    <h2>Harta magazinului</h2>
+                    <p>Faceți click pe diferitele zone ale magazinului pentru mai multe informații:</p>
+                    <img src="public/resources/hartamag.jpg" alt="Harta magazinului" usemap="#map-magazin">
+                    <map name="map-magazin">
+                        <area shape="rect" coords="0,0,200,200" href="#instrumente" alt="Zona instrumente cu coarde">
+                        <area shape="rect" coords="201,0,400,200" href="#servicii" alt="Zona de servicii">
+                        <area shape="circle" coords="300,300,100" href="#instrumente"
+                            alt="Zona instrumente de percuție">
+                        <area shape="poly" coords="0,201,200,201,100,400" href="#oferte" alt="Zona de oferte speciale">
+                    </map>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <h2>Contact</h2>
+        <address>
+            <p>
+                Telefon: <a href="tel:+40755123456">0755 123 456</a><br>
+
+                Adresă: <a href="https://maps.google.com/maps?q=Faculty+of+Mathematics+and+Computer+Science+Bucharest"
+                    target="_blank">Strada Muzicienilor nr. 42, București</a><br>
+
+                <!-- Email fictiv cu URI Scheme corespunzător -->
+                Email: <a href="mailto:contact@armonia-muzica.ro">contact@armonia-muzica.ro</a><br><i
+                    class="fas fa-envelope fa-bounce"></i><br>
+
+                Chat: <a href="https://wa.me/40755123456">WhatsApp</a>
+            </p>
+        </address>
+
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2848.8844338769864!2d26.101361876673678!3d44.43548360055274!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1ff472f47f047%3A0x493984726f0235f9!2sFaculty%20of%20Mathematics%20and%20Computer%20Science!5e0!3m2!1sen!2sro!4v1701290821259!5m2!1sen!2sro"
+            width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+
+        <p>
+            <small>&copy; Armonia - Magazin de Instrumente Muzicale, <time datetime="2025-03-05">5 martie
+                    2025</time></small>
+        </p>
+
+        <!-- Butonul de "înapoi la început" -->
+        <a href="#top" class="back-to-top" title="Click pentru a reveni în partea de sus a paginii">ᐃ</a>
+    </footer>
+</body>
+
+</html>

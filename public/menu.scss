@@ -1,0 +1,333 @@
+$primary: #3498db;
+$secondary: #2c3e50;
+$accent: #e74c3c;
+$text-light: #fff;
+$transition: 0.3s;
+
+@mixin gradient-bar {
+  content: '';
+  position: absolute;
+  width: 120%;
+  height: 3px;
+  background: linear-gradient(to right, $secondary, $text-light);
+  bottom: 0;
+  left: 0;
+  transform: translateX(100%);
+  z-index: -1;
+  transition: transform $transition ease;
+}
+
+.main-nav {
+  width: 100%;
+  background-color: $primary;
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  
+  .menu-toggle-checkbox {
+    display: none;
+  }
+  
+  .menu-toggle-label {
+    display: none;
+    padding: 1rem;
+    cursor: pointer;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+    
+    // Hamburger icon container
+    .hamburger-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      
+      // Hamburger bars
+      .hamburger-bar {
+        position: absolute;
+        width: 30px;
+        height: 3px;
+        background-color: $text-light;
+        left: 50%;
+        transform: translateX(-50%);
+        transition: transform $transition ease,
+                    background-color $transition ease,
+                    opacity $transition ease;
+        @for $i from 1 through 3 {
+          &:nth-child(#{$i}) {
+            top: 10px + ($i - 1)*10px;
+          }
+        }
+      }
+    }
+  }
+  
+  // Animation for hamburger icon on menu toggle
+  .menu-toggle-checkbox:checked + .menu-toggle-label {
+    .hamburger-container {
+      .hamburger-bar {
+        background-color: $accent;
+        @for $i from 1 through 3 {
+          &:nth-child(#{$i}) {
+            transition-delay: ($i - 1)*150ms;
+          }
+        }
+        &:nth-child(1) {
+          transform: translateX(-50%) rotate(45deg) translate(7px, 7px);
+        }
+        &:nth-child(2) {
+          opacity: 0;
+        }
+        &:nth-child(3) {
+          transform: translateX(-50%) rotate(-45deg) translate(7px, -7px);
+        }
+      }
+    }
+  }
+  
+  .nav-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    
+    .nav-item {
+      position: relative;
+      @for $i from 1 through 5 {
+        &:nth-child(#{$i}) {
+          z-index: 6 - $i;
+        }
+      }
+      
+      .nav-link {
+        display: block;
+        padding: 1rem 1.5rem;
+        color: $text-light;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all $transition ease;
+        position: relative;
+        overflow: hidden;
+        
+        &::before {
+          @include gradient-bar;
+        }
+        
+        &:hover {
+          color: $accent;
+          &::before {
+            transform: translateX(0);
+          }
+        }
+        
+        i {
+          margin-left: 0.5rem;
+        }
+      }
+      
+      // Submenu styles
+      .submenu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 200px;
+        background-color: $secondary;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        transform: scaleY(0);
+        transform-origin: center center;
+        max-height: 0;
+        opacity: 0;
+        transition: transform $transition ease,
+                    max-height $transition ease,
+                    opacity $transition ease;
+        
+        .submenu-item {
+          .submenu-link {
+            display: block;
+            padding: 0.8rem 1rem;
+            color: $text-light;
+            text-decoration: none;
+            transition: background-color $transition ease;
+            
+            &:hover {
+              background-color: $accent;
+            }
+          }
+          
+          // Generate background variations
+          @for $i from 1 through 5 {
+            &:nth-child(#{$i}) {
+              .submenu-link {
+                background-color: darken($secondary, $i * 2%);
+              }
+            }
+          }
+        }
+      }
+      
+      &:hover .submenu {
+        transform: scaleY(1);
+        max-height: 300px;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// Large screens: Show text for home nav item and hide icon
+@media screen and (min-width: 1025px) {
+  .main-nav {
+    .nav-list {
+      .nav-item.home {
+        .nav-link {
+          .text {
+            display: inline;
+          }
+          i {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Medium screens: Show icon for home nav item and hide text
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .main-nav {
+    .nav-list {
+      .nav-item.home {
+        .nav-link {
+          .text {
+            display: none;
+          }
+          i {
+            display: inline-block;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Small screens: Hamburger menu styles and show home nav item text only
+@media screen and (max-width: 768px) {
+  .main-nav {
+    .menu-toggle-label {
+      display: block;
+      text-align: right;
+      
+      // Animation for hamburger icon when screen size changes
+      .hamburger-container {
+        .hamburger-bar {
+          animation: hamburgerAppear 0.8s forwards;
+          opacity: 0;
+          @for $i from 1 through 3 {
+            &:nth-child(#{$i}) {
+              animation-delay: ($i - 1)*300ms;
+            }
+          }
+        }
+      }
+    }
+    
+    @keyframes hamburgerAppear {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(0);
+        background-color: $text-light;
+      }
+      40% {
+        opacity: 0.5;
+        transform: translateX(-50%) scaleX(1.2);
+        background-color: lighten($accent, 20%);
+      }
+      70% {
+        opacity: 0.8;
+        transform: translateX(-50%) scaleX(0.9);
+        background-color: $accent;
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(-50%) scaleX(1);
+        background-color: $text-light;
+      }
+    }
+    
+    .nav-list {
+      flex-direction: column;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      background-color: $primary;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transform-origin: top right;
+      transform: rotate(10deg);
+      transition: max-height 0.5s ease, opacity $transition ease, transform $transition ease;
+      z-index: 100;
+      
+      .nav-item {
+        width: 100%;
+        
+        .nav-link {
+          display: flex;
+          justify-content: space-between;
+          padding: 1rem;
+          transition: background-color $transition ease, color $transition ease;
+          
+          &::before {
+            display: none;
+          }
+          &:hover {
+            background-color: darken($primary, 15%);
+            color: $text-light;
+          }
+          i {
+            margin-left: 0;
+          }
+        }
+        
+        .submenu {
+          position: static;
+          width: 100%;
+          background-color: darken($primary, 10%);
+          
+          .submenu-link {
+            padding-left: 2rem;
+            transition: background-color $transition ease, color $transition ease;
+            &:hover {
+              background-color: darken($primary, 20%);
+              color: $text-light;
+            }
+          }
+        }
+      }
+    }
+    
+    .menu-toggle-checkbox:checked ~ .nav-list {
+      max-height: 100vh;
+      opacity: 1;
+      transform: rotate(0deg);
+    }
+    
+    // For home nav item in small screens, show text (Acasă) and hide the icon
+    .nav-list {
+      .nav-item.home {
+        .nav-link {
+          .text {
+            display: inline;
+          }
+          i {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

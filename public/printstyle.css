@@ -1,0 +1,100 @@
+/* Print styles for Armonia website */
+@media print {
+    /* Basic reset for printing */
+    body {
+        background-color: white;
+        color: black;
+        margin: 0;
+        padding: 0;
+    }
+    
+    /* 1. Banner at the top of first page */
+    body::before {
+        content: "Acesta este un proiect școlar!";
+        display: block;
+        width: 80%;
+        margin: 0 auto;
+        text-align: center;
+        border: 1px dotted black;
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+    
+    /* 2. Hide media elements and back-to-top link */
+    img, video, iframe, figure, figcaption, .back-to-top, map, area, object {
+        display: none !important;
+    }
+    
+    /* 3. Display grid as block to prevent section breaks */
+    .grid-container {
+        display: block !important;
+    }
+    
+    .zone {
+        margin-bottom: 20px;
+        page-break-inside: avoid;
+    }
+    
+    /* 4. Format links as normal text */
+    a {
+        text-decoration: none;
+        color: black;
+    }
+    
+    a::after {
+        content: "";
+    }
+    
+    /* 5. H1 styling and page breaks */
+    h1 {
+        text-align: center;
+        text-decoration: underline;
+        font-size: calc(2.5 * 1rem); /* 2.5 times the html font size */
+        margin: 0;
+    }
+    
+    nav {
+        display: none;
+    }
+    
+    header {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        page-break-after: always;
+    }
+    
+    footer {
+        page-break-before: always;
+    }
+    
+    /* 6. Watermark on every page */
+    body::after {
+        content: "Podeanu Matei-Alexandru";
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 100px;
+        height: 2cm;
+        opacity: 0.65;
+        border: double;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transform: translate(-50%, -50%);
+        z-index: -1;
+    }
+    
+    /* 7. Page margins for left and right pages */
+    @page:left {
+        margin-left: 2.5cm;
+        margin-right: 0.5cm;
+    }
+    
+    @page:right {
+        margin-left: 0.5cm;
+        margin-right: 2.5cm;
+    }
+}

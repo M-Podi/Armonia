@@ -1,0 +1,44 @@
+<header>
+    <h1>
+        <!-- Icon -->
+        <i class="fas fa-music"></i> Armonia - Magazin de Instrumente Muzicale
+    </h1>
+
+    <nav class="main-nav">
+        <!-- Hamburger checkbox for small screens -->
+        <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox">
+        <label for="menu-toggle" class="menu-toggle-label">
+            <i class="fas fa-bars"></i>
+        </label>
+        <ul class="nav-list">
+            <li class="nav-item home">
+                <a href="/" class="nav-link <%= currentPage === 'home' ? 'active' : '' %>">
+                    <span class="text">Acasă</span>
+                    <i class="fas fa-home"></i>
+                </a>
+                <ul class="submenu">
+                    <li class="submenu-item"><a href="/#despre-noi" class="submenu-link">Despre noi</a></li>
+                    <li class="submenu-item"><a href="/#instrumente" class="submenu-link">Instrumente</a></li>
+                    <li class="submenu-item"><a href="/#servicii" class="submenu-link">Servicii</a></li>
+                    <li class="submenu-item"><a href="/#oferte" class="submenu-link">Oferte speciale</a></li>
+                    <li class="submenu-item"><a href="/#faq" class="submenu-link">Întrebări frecvente</a></li>
+                </ul>
+            </li>
+            <li class="nav-item"><a href="/#instrumente" class="nav-link">Catalog instrumente</a></li>
+            <li class="nav-item"><a href="/#servicii" class="nav-link">Servicii reparații</a></li>
+            <li class="nav-item"><a href="/#catalog" class="nav-link">Accesorii</a></li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">Pagini</a>
+                <ul class="submenu">
+                    <li class="submenu-item"><a href="/magazin"
+                            class="submenu-link <%= currentPage === 'magazin' ? 'active' : '' %>">Magazin online</a>
+                    </li>
+                    <li class="submenu-item"><a href="/eveniment"
+                            class="submenu-link <%= currentPage === 'eveniment' ? 'active' : '' %>">Evenimente</a></li>
+                    <li class="submenu-item"><a href="/blog"
+                            class="submenu-link <%= currentPage === 'blog' ? 'active' : '' %>">Blog muzical</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</header>
