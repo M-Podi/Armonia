@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <%- include('../fragments/head') %>
+        <style>
+            .error-container {
+                text-align: center;
+                padding: 50px 20px;
+            }
+
+            .error-image {
+                max-width: 300px;
+                margin-bottom: 30px;
+            }
+
+            .error-text {
+                margin: 20px 0;
+            }
+
+            .back-button {
+                display: inline-block;
+                margin-top: 20px;
+                padding: 10px 20px;
+                background-color: var(--primary-color);
+                color: var(--text-light);
+                text-decoration: none;
+                border-radius: 5px;
+            }
+        </style>
+</head>
+
+<body>
+    <%- include('../fragments/header') %>
+
+        <main>
+            <div class="error-container">
+                <h1>
+                    <%= titlu %>
+                </h1>
+                <img src="<%= caleImagine %>" alt="Imagine eroare" class="error-image">
+                <p class="error-text">
+                    <%= text %>
+                </p>
+                <a href="/" class="back-button">Înapoi la pagina principală</a>
+            </div>
+        </main>
+
+        <%- include('../fragments/footer') %>
+</body>
+
+</html>

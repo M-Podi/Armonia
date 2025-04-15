@@ -1,0 +1,31 @@
+{
+  "cale_baza": "/resources/",
+  "eroare_default": {
+    "titlu": "Eroare - Armonia",
+    "text": "A apărut o eroare neașteptată. Te rugăm să încerci din nou.",
+    "imagine": "error-default.jpg"
+  },
+  "info_erori": [
+    {
+      "identificator": 404,
+      "status": true,
+      "titlu": "Pagină negăsită",
+      "text": "Ne pare rău, pagina pe care o cauți nu există.",
+      "imagine": "404.jpeg"
+    },
+    {
+      "identificator": 403,
+      "status": true,
+      "titlu": "Acces interzis",
+      "text": "Nu ai permisiunea de a accesa această pagină.",
+      "imagine": "403.jpeg"
+    },
+    {
+      "identificator": 500,
+      "status": true,
+      "titlu": "Eroare de server",
+      "text": "A apărut o eroare la server. Te rugăm să încerci mai târziu.",
+      "imagine": "500.jpeg"
+    }
+  ]
+}

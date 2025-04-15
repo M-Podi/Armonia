@@ -27,6 +27,69 @@ console.log('process.cwd() reprezintă directorul din care a fost pornit procesu
 // Configurare pentru fișiere statice
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+const fs = require('fs');
+
+// Încărcăm configurația de erori
+let obGlobal = {
+    obErori: null
+};
+
+// Citim fișierul de erori
+try {
+    obGlobal.obErori = JSON.parse(fs.readFileSync(path.join(__dirname, "erori.json")));
+} catch (err) {
+    console.error("Eroare la încărcarea fișierului de erori:", err);
+}
+
+// Funcție pentru afișarea paginii de eroare
+function afiseazaEroare(res, identificator = undefined, titluArg = undefined, textArg = undefined, imagineArg = undefined) {
+    let eroare;
+    
+    if (obGlobal.obErori) {
+        if (identificator) {
+            // Căutăm eroarea cu identificatorul dat
+            const eroareGasita = obGlobal.obErori.info_erori.find(err => err.identificator === identificator);
+            eroare = eroareGasita || obGlobal.obErori.eroare_default;
+        } else {
+            // Dacă nu este dat identificatorul, folosim eroarea default
+            eroare = obGlobal.obErori.eroare_default;
+        }
+    } else {
+        // Fallback în caz că nu avem configurație JSON
+        eroare = {
+            titlu: "Eroare",
+            text: "A apărut o eroare!",
+            imagine: "error-default.jpg"
+        };
+    }
+    
+    // Pentru fiecare proprietate, dacă argumentul este dat, are prioritate
+    const titluFinal = titluArg !== undefined ? titluArg : eroare.titlu;
+    const textFinal = textArg !== undefined ? textArg : eroare.text;
+    const imagineFinal = imagineArg !== undefined ? imagineArg : eroare.imagine;
+    
+    // Setăm statusul răspunsului dacă errorul definește status și identificator
+    if (eroare.status && eroare.identificator) {
+        res.status(eroare.identificator);
+    }
+    
+    // Construim calea către imagine
+    const caleImagine = obGlobal.obErori ? 
+        (obGlobal.obErori.cale_baza + imagineFinal) : 
+        ("/resources/" + imagineFinal);
+    
+    // Randăm pagina de eroare cu datele finale
+    res.render("pages/eroare", {
+        pageTitle: titluFinal,
+        titlu: titluFinal,
+        text: textFinal,
+        caleImagine: caleImagine,
+        currentPage: "eroare"
+    });
+}
+
+
 // Ruta pentru pagina principală
 app.get(['/', '/index', '/home'], (req, res) => {
   res.render('pages/index', {
@@ -56,6 +119,32 @@ app.get('/blog', (req, res) => {
     currentPage: 'blog'
   });
 });
+
+
+
+app.get("/*", (req, res) => {
+    // Remove the initial "/" to get the page name
+    const pagina = req.path.substring(1);
+    res.render(`pages/${pagina}`, {
+        pageTitle: `${pagina.charAt(0).toUpperCase() + pagina.slice(1)} - Armonia`,
+        currentPage: pagina
+    }, (err, rezultatRandare) => {
+        if (err) {
+            if (err.message.startsWith("Failed to lookup view")) {
+                afiseazaEroare(res, 404);
+            } else {
+                afiseazaEroare(res);
+            }
+        } else {
+            res.send(rezultatRandare);
+        }
+    });
+});
+
+app.use((req, res) => {
+    afiseazaEroare(res, 404);
+});
+
 
 // Definirea portului pe care va asculta serverul
 const port = 8080;
