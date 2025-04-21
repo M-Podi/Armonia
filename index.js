@@ -94,7 +94,8 @@ function afiseazaEroare(res, identificator = undefined, titluArg = undefined, te
 app.get(['/', '/index', '/home'], (req, res) => {
   res.render('pages/index', {
     pageTitle: 'Armonia - Magazin de Instrumente Muzicale',
-    currentPage: 'home'
+    currentPage: 'home',
+    ip: req.ip // transmiterea adresei IP a utilizatorului
   });
 });
 
