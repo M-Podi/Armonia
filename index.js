@@ -1,18 +1,21 @@
 // Importarea modulelor necesare
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 // Crearea unei instanțe a aplicației Express
 const app = express();
 
+// Obiect global pentru stocarea datelor comune
+let obGlobal = {
+    obErori: null
+};
+
 // Setarea motorului de template la EJS
 app.set('view engine', 'ejs');
 
-app.set('views', path.join(__dirname, 'views'));
-
 // Configurarea directorului pentru vizualizări
 app.set('views', path.join(__dirname, 'views'));
-
 
 // Afișarea căilor cerute
 console.log('Calea folderului în care se găsește fișierul index.js (__dirname):', __dirname);
@@ -27,17 +30,22 @@ console.log('process.cwd() reprezintă directorul din care a fost pornit procesu
 // Configurare pentru fișiere statice
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Blocare acces la anumite rute în directorul public
+app.use(/^\/public(\/[a-zA-Z0-9]*(?!\.)[a-zA-Z0-9]*)*$/, function (req, res) {
+    afiseazaEroare(res, 403);
+});
 
-const fs = require('fs');
+// Ruta pentru favicon
+app.get("/favicon.ico", function (req, res) {
+    res.sendFile(path.join(__dirname, "public", "resources", "favicon", "favicon.ico"));
+});
 
 // Încărcăm configurația de erori
-let obGlobal = {
-    obErori: null
-};
-
-// Citim fișierul de erori
 try {
     obGlobal.obErori = JSON.parse(fs.readFileSync(path.join(__dirname, "erori.json")));
+    
+    // Procesăm căile imaginilor pentru erori, dar NU modificăm calea în obiect
+    // Vom construi calea completă doar când renderăm pagina
 } catch (err) {
     console.error("Eroare la încărcarea fișierului de erori:", err);
 }
@@ -69,15 +77,17 @@ function afiseazaEroare(res, identificator = undefined, titluArg = undefined, te
     const textFinal = textArg !== undefined ? textArg : eroare.text;
     const imagineFinal = imagineArg !== undefined ? imagineArg : eroare.imagine;
     
-    // Setăm statusul răspunsului dacă errorul definește status și identificator
+    // Setăm statusul răspunsului dacă eroarea definește status și identificator
     if (eroare.status && eroare.identificator) {
         res.status(eroare.identificator);
     }
     
-    // Construim calea către imagine
+    // Construim calea către imagine - important pentru afișarea corectă
     const caleImagine = obGlobal.obErori ? 
-        (obGlobal.obErori.cale_baza + imagineFinal) : 
+        ("/" + obGlobal.obErori.cale_baza + imagineFinal) : 
         ("/resources/" + imagineFinal);
+    
+    console.log("Calea imaginii de eroare:", caleImagine); // Log pentru debugging
     
     // Randăm pagina de eroare cu datele finale
     res.render("pages/eroare", {
@@ -89,6 +99,10 @@ function afiseazaEroare(res, identificator = undefined, titluArg = undefined, te
     });
 }
 
+// Blocare acces direct la fișierele .ejs
+app.get("/*.ejs", function (req, res) {
+    afiseazaEroare(res, 400);
+});
 
 // Ruta pentru pagina principală
 app.get(['/', '/index', '/home'], (req, res) => {
@@ -121,8 +135,7 @@ app.get('/blog', (req, res) => {
   });
 });
 
-
-
+// Rută generică pentru alte pagini - trebuie să fie ultima
 app.get("/*", (req, res) => {
     // Remove the initial "/" to get the page name
     const pagina = req.path.substring(1);
@@ -142,10 +155,10 @@ app.get("/*", (req, res) => {
     });
 });
 
+// Handler pentru toate rutele neasociate - afișează eroare 404
 app.use((req, res) => {
     afiseazaEroare(res, 404);
 });
-
 
 // Definirea portului pe care va asculta serverul
 const port = 8080;

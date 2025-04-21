@@ -1,5 +1,5 @@
 {
-  "cale_baza": "/resources/",
+  "cale_baza": "resources/",
   "eroare_default": {
     "titlu": "Eroare - Armonia",
     "text": "A apărut o eroare neașteptată. Te rugăm să încerci din nou.",
