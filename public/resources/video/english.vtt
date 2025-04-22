@@ -1,0 +1,12 @@
+WEBVTT
+STYLE
+::cue {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #1a1a1a;
+  text-align: center;
+}
+
+1
+00:00:00.000 --> 00:00:10.000 line:50% position:50%
+English subtitles...
+

@@ -11,6 +11,27 @@ let obGlobal = {
     obErori: null
 };
 
+// Verificare și creare foldere necesare
+const vect_foldere = ["temp"]; // Pentru testare puteți adăuga și "temp1"
+
+// Iterăm prin vector și verificăm/creăm fiecare folder
+for (let folder of vect_foldere) {
+    // Construim calea completă folosind path.join()
+    const folderPath = path.join(__dirname, folder);
+    
+    // Verificăm dacă folderul există
+    if (!fs.existsSync(folderPath)) {
+        // Dacă nu există, îl creăm
+        console.log(`Folderul ${folder} nu există. Se creează...`);
+        fs.mkdirSync(folderPath);
+        console.log(`Folderul ${folder} a fost creat cu succes!`);
+    } else {
+        console.log(`Folderul ${folder} există deja.`);
+    }
+}
+
+console.log('Procesul de verificare/creare a folderelor s-a finalizat.');
+
 // Setarea motorului de template la EJS
 app.set('view engine', 'ejs');
 

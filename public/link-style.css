@@ -1,0 +1,97 @@
+:root {
+    /* Adăugăm variabila pentru culoarea linkurilor vizitate */
+    --accent-color: #ff4500;
+}
+
+/* Stilizare de bază pentru linkuri */
+a {
+    color: var(--secondary-color); /* Schimbat din primary-color la secondary-color (#C9A227) */
+    text-decoration: underline; /* Adăugăm subliniere pentru o mai bună vizibilitate */
+    transition: color 0.3s ease;
+}
+
+/* Stilizare pentru linkuri vizitate */
+a:visited {
+    color: var(--visited-link-color); /* Updated to use the visited link variable */
+    text-decoration-color: var(--visited-link-color);
+}
+
+/* Stilizare pentru linkuri vizitate pe fundaluri închise */
+.zone a:visited, 
+header a:visited, 
+footer a:visited {
+    color: #e07a9b; /* O nuanță mai deschisă de accent-color pentru contrast pe fundal închis */
+    text-decoration-color: #e07a9b;
+}
+
+/* Stilizare pentru linkuri externe cu simbolul ⮳ */
+a[href^="http"]::before {
+    content: "⮳";
+    font-size: 150%; /* Cu 50% mai mare decât dimensiunea fontului linkului */
+    display: inline-block;
+    margin-right: 0.3em;
+    vertical-align: middle;
+    transition: color 0.3s ease;
+}
+
+/* Efect de hover pentru simbolul linkurilor externe */
+a[href^="http"]:hover::before {
+    color: var(--secondary-color);
+}
+
+/* Efect de hover cu pată de culoare pentru linkurile din conținut */
+main a {
+    position: relative;
+    /* Aplicăm gradientul radial ca imagine de fundal */
+    background-image: radial-gradient(
+        circle, 
+        var(--neutral-color) 0%, /* Schimbăm culoarea petei la neutral-color (#7C8B7F) */
+        var(--neutral-color) 40%, 
+        transparent 80%, 
+        transparent 100%
+    );
+    background-position: center;
+    background-size: 0;
+    background-repeat: no-repeat;
+    transition: background-size 0.6s ease;
+}
+
+main a:hover {
+    background-size: 100%;
+}
+
+/* Excepții pentru linkurile din meniu și footer */
+nav a, 
+.nav-link,
+.back-to-top, 
+footer a {
+    background-image: none;
+}
+
+/* Stilizare diferită pentru linkuri pe fundaluri închise (zone, header, footer) */
+.zone a, 
+header a, 
+footer a {
+    color: var(--complement-color); /* Culoare deschisă (#F7E6D0) pentru contrast pe fundal închis */
+    text-decoration: underline;
+}
+
+/* Hover pentru linkuri pe fundaluri închise */
+.zone a:hover, 
+header a:hover, 
+footer a:hover {
+    color: var(--secondary-color); /* La hover devine galben/auriu (#C9A227) */
+}
+
+/* Eliminăm simbolul ⮳ pentru linkuri interne și de navigare */
+nav a[href^="http"]::before,
+.nav-link[href^="http"]::before,
+.back-to-top::before,
+.submenu-link[href^="http"]::before {
+    content: none;
+}
+
+/* Corectăm afișarea pentru subtitluri și elemente speciale */
+.submenu a {
+    background-image: none;
+}
