@@ -3,17 +3,20 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
+const sass = require('sass'); // Adăugat modulul sass
 
 // Crearea unei instanțe a aplicației Express
 const app = express();
 
 // Obiect global pentru stocarea datelor comune
 let obGlobal = {
-    obErori: null
+    obErori: null,
+    folderScss: path.join(__dirname, "scss"),
+    folderCss: path.join(__dirname, "public/css")
 };
 
 // Verificare și creare foldere necesare
-const vect_foldere = ["temp", "public/resources/galerie"];
+const vect_foldere = ["temp", "public/resources/galerie", "backup"];
 
 // Iterăm prin vector și verificăm/creăm fiecare folder
 for (let folder of vect_foldere) {
@@ -32,6 +35,147 @@ for (let folder of vect_foldere) {
 }
 
 console.log('Procesul de verificare/creare a folderelor s-a finalizat.');
+
+/**
+ * Funcția pentru compilarea unui fișier SCSS în CSS
+ * @param {string} caleScss - Calea către fișierul SCSS (poate fi absolută sau relativă la folderScss)
+ * @param {string} caleCss - Calea către fișierul CSS rezultat (poate fi absolută sau relativă la folderCss)
+ */
+function compileazaScss(caleScss, caleCss) {
+    // Verifică dacă calea către scss este absolută sau relativă
+    if (!path.isAbsolute(caleScss)) {
+        caleScss = path.join(obGlobal.folderScss, caleScss);
+    }
+
+    // Verificăm dacă fișierul scss există
+    if (!fs.existsSync(caleScss)) {
+        console.error(`Fișierul scss nu există: ${caleScss}`);
+        return;
+    }
+
+    // Dacă nu avem cale css specificată, o generăm din caleScss
+    if (!caleCss) {
+        // Extragem numele fișierului scss
+        const numeFisierScss = path.basename(caleScss);
+        // Înlocuim extensia .scss cu .css
+        const numeFisierCss = numeFisierScss.replace(/\.scss$/, '.css');
+        // Construim calea completă pentru fișierul css
+        caleCss = path.join(obGlobal.folderCss, numeFisierCss);
+    } else if (!path.isAbsolute(caleCss)) {
+        // Dacă avem cale css relativă, o facem absolută
+        caleCss = path.join(obGlobal.folderCss, caleCss);
+    }
+
+    // Creăm folderul pentru css dacă nu există
+    const dirCaleCss = path.dirname(caleCss);
+    if (!fs.existsSync(dirCaleCss)) {
+        try {
+            fs.mkdirSync(dirCaleCss, { recursive: true });
+            console.log(`Folderul CSS a fost creat: ${dirCaleCss}`);
+        } catch (err) {
+            console.error(`Eroare la crearea folderului pentru css: ${dirCaleCss}`, err);
+            return; // Oprim execuția dacă nu putem crea folderul
+        }
+    }
+
+    // Verificăm dacă fișierul css există deja pentru a face backup
+    if (fs.existsSync(caleCss)) {
+        // Creăm calea pentru backup
+        const numeFisierCss = path.basename(caleCss);
+        const caleCssBackup = path.join(__dirname, "backup", "resurse/css", numeFisierCss);
+        const dirCaleCssBackup = path.dirname(caleCssBackup);
+
+        // Creăm folderele necesare pentru backup
+        if (!fs.existsSync(dirCaleCssBackup)) {
+            try {
+                fs.mkdirSync(dirCaleCssBackup, { recursive: true });
+                console.log(`Folderul pentru backup CSS a fost creat: ${dirCaleCssBackup}`);
+            } catch (err) {
+                console.error(`Eroare la crearea folderului pentru backup: ${dirCaleCssBackup}`, err);
+            }
+        }
+
+        // Copiem fișierul css în folderul de backup
+        try {
+            fs.copyFileSync(caleCss, caleCssBackup);
+            console.log(`Backup creat pentru ${numeFisierCss} la ${caleCssBackup}`);
+        } catch (err) {
+            console.error(`Eroare la copierea fișierului css pentru backup: ${caleCss}`, err);
+        }
+    }
+
+    // Compilăm scss în css
+    try {
+        // Folosim sass pentru compilare
+        const rezCompilare = sass.renderSync({
+            file: caleScss,
+            outputStyle: 'compressed'
+        });
+
+        // Scriem rezultatul în fișierul css
+        fs.writeFileSync(caleCss, rezCompilare.css);
+        console.log(`Compilare reușită a fișierului ${path.basename(caleScss)} în ${path.basename(caleCss)}`);
+    } catch (err) {
+        console.error(`Eroare la compilarea fișierului: ${caleScss}`, err);
+    }
+}
+
+/**
+ * Funcție pentru compilarea tuturor fișierelor scss
+ */
+function compileazaToateScssurile() {
+    // Verificăm dacă folderul scss există
+    if (fs.existsSync(obGlobal.folderScss)) {
+        // Citim conținutul folderului scss
+        let fisiere = fs.readdirSync(obGlobal.folderScss);
+
+        // Filtrăm doar fișierele cu extensia .scss
+        let fisiereSCSS = fisiere.filter(f => path.extname(f).toLowerCase() === '.scss');
+
+        // Compilăm fiecare fișier scss
+        fisiereSCSS.forEach(fisier => {
+            compileazaScss(fisier);
+        });
+
+        console.log(`S-au compilat ${fisiereSCSS.length} fișiere scss.`);
+    } else {
+        console.error(`Folderul scss nu există: ${obGlobal.folderScss}`);
+        // Creăm folderul scss dacă nu există
+        try {
+            fs.mkdirSync(obGlobal.folderScss, { recursive: true });
+            console.log(`Folderul scss a fost creat: ${obGlobal.folderScss}`);
+        } catch (err) {
+            console.error(`Eroare la crearea folderului scss: ${obGlobal.folderScss}`, err);
+        }
+    }
+}
+
+/**
+ * Funcție pentru urmărirea modificărilor în folderul scss
+ */
+function urmaresteFolderScss() {
+    // Verificăm dacă folderul scss există
+    if (fs.existsSync(obGlobal.folderScss)) {
+        console.log(`Urmărirea modificărilor în folderul: ${obGlobal.folderScss}`);
+
+        // Folosim fs.watch pentru a monitoriza modificările
+        fs.watch(obGlobal.folderScss, (eveniment, numeFisier) => {
+            // Verificăm dacă este un fișier scss
+            if (path.extname(numeFisier).toLowerCase() === '.scss') {
+                console.log(`Modificare detectată la fișierul: ${numeFisier}`);
+
+                // Recompilăm fișierul modificat
+                compileazaScss(numeFisier);
+            }
+        });
+    } else {
+        console.error(`Folderul scss nu există: ${obGlobal.folderScss}`);
+    }
+}
+
+// Apelăm compilarea inițială și pornirea monitorizării modificărilor
+compileazaToateScssurile();
+urmaresteFolderScss();
 
 // Setarea motorului de template la EJS
 app.set('view engine', 'ejs');
