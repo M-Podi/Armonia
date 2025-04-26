@@ -1,0 +1,88 @@
+{
+  "cale_galerie": "resources/galerie/",
+  "imagini": [
+    {
+      "cale_fisier": "acustica.jpg",
+      "titlu": "Chitară acustică",
+      "text_descriere": "Chitară acustică vintage expusă în vitrina magazinului",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "pian.jpg",
+      "titlu": "Pian Grand",
+      "text_descriere": "Pian de concert în sala noastră de evenimente",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "vioara.jpg",
+      "titlu": "Vioară",
+      "text_descriere": "Vioară realizată manual de lutierul Adrian Popescu",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "saxofon.png",
+      "titlu": "Saxofon vintage",
+      "text_descriere": "Saxofon din colecția de instrumente clasice",
+      "anotimp": "primavara",
+      "atribuire": {
+        "autor": "Autor",
+        "site": "soundcreation",
+        "url": "https://www.soundcreation.ro/saxofoane-alto-cid843/yamaha-yas-280-id18478.html"
+      }
+    },
+    {
+      "cale_fisier": "tobe.png",
+      "titlu": "Set de tobe",
+      "text_descriere": "Set complet de tobe acustice pentru concerte",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "flaut.png",
+      "titlu": "Flaut de argint",
+      "text_descriere": "Flaut profesional din argint pentru orchestră",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "banjo.png",
+      "titlu": "Banjo clasic",
+      "text_descriere": "Banjo tradițional cu 5 corzi",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "trompeta.png",
+      "titlu": "Trompetă aurită",
+      "text_descriere": "Trompetă cu finisaj auriu pentru spectacole",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "xilofon.png",
+      "titlu": "Xilofon profesional",
+      "text_descriere": "Xilofon de concert cu sunet clar și profund",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "contrabas.png",
+      "titlu": "Contrabas de orchestră",
+      "text_descriere": "Contrabas masiv pentru orchestre simfonice",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "ukulele.png",
+      "titlu": "Ukulele Hawaiian",
+      "text_descriere": "Ukulele din lemn de mahon, perfect pentru plajă",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "harpa.png",
+      "titlu": "Harpa clasică",
+      "text_descriere": "Harpa cu 47 de corzi, ideală pentru muzica clasică",
+      "anotimp": "primavara"
+    },
+    {
+      "cale_fisier": "orga.png",
+      "titlu": "Orgă electronică",
+      "text_descriere": "Orgă cu sunete variate pentru muzica modernă",
+      "anotimp": "primavara"
+    }
+  ]
+}

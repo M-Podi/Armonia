@@ -1,0 +1,24 @@
+<section class="galerie-container">
+  <% imagini.forEach((imagine, index)=> { %>
+    <figure class="galerie-item">
+      <picture>
+        <source media="(max-width: 600px)"
+          srcset="<%= cale_galerie %><%=imagine.cale_fisier.replace(/\.[^.]+$/, '_small$&') %>">
+        <source media="(max-width: 1024px)"
+          srcset="<%= cale_galerie %><%=imagine.cale_fisier.replace(/\.[^.]+$/, '_medium$&') %>">
+        <img src="<%= cale_galerie %><%= imagine.cale_fisier %>" alt="<%= imagine.alt || imagine.titlu %>"
+          title="<%= imagine.text_descriere %>" class="galerie-imagine">
+      </picture>
+      <figcaption>
+        <%= imagine.text_descriere %>
+          <% if(imagine.atribuire) { %>
+            <div class="atribuire">
+              Credit: <a href="<%= imagine.atribuire.url %>" target="_blank">
+                <%= imagine.atribuire.autor %> / <%= imagine.atribuire.site %>
+              </a>
+            </div>
+            <% } %>
+      </figcaption>
+    </figure>
+    <% }) %>
+</section>
