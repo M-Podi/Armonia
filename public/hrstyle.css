@@ -1,0 +1,46 @@
+.decorative-hr {
+    position: relative;
+    border: none;
+    height: 1.5em;
+    overflow: visible;
+    width: 80%;
+    margin: 30px auto;
+    background: transparent;
+}
+
+.decorative-hr::before {
+    content: '*';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: #555;
+    font-size: 24px;
+    line-height: 1;
+    z-index: 1;
+}
+
+
+.decorative-hr::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 2px;
+    z-index: 0;
+
+
+    --gap-half: 15px;
+
+    background: linear-gradient(to right,
+            black 0%,
+            black calc(50% - var(--gap-half)),
+            transparent calc(50% - var(--gap-half)),
+            transparent calc(50% + var(--gap-half)),
+            black calc(50% + var(--gap-half)),
+            black 100%);
+
+    border-radius: 3px;
+}
