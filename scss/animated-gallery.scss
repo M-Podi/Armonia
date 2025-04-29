@@ -1,105 +1,140 @@
-// scss/galerie-animata.scss
+// scss/animated-gallery.scss
 
-// --- Default Variables (will be overridden by Node.js) ---
-$numar-imagini: 4 !default; // Default number of images if not provided
-$slide-duration: 4s !default; // Duration each slide is fully visible + transition
-$transition-percentage: 15%; // Percentage of slide duration for fade/clip transition (e.g., 15% = 0.6s for 4s slide)
+// --- Variables (will be provided by Node.js) ---
+$numar-imagini: 4 !default;              // Number of images in gallery
+$slide-duration: 2s !default;            // Time each slide is displayed
+$transition-percentage: 15 !default;     // Percentage of slide time for transitions
 
 // --- Calculated Variables ---
 $total-animation-duration: $numar-imagini * $slide-duration;
-$border-thickness: 15px; // Adjust border thickness
-$border-image-slice: 40; // Adjust border image slicing
+$border-thickness: 15px;                // Border thickness
+$border-image-slice: 40;                // Border image slice value
 
+// --- Main Container ---
 #galerie-animata-container {
-  display: block; // Initially visible on large screens
+  display: block;                       // Visible by default on large screens
   margin: 2em auto;
-  max-width: 700px; // Adjust max width as needed
-  aspect-ratio: 16 / 9; // Maintain aspect ratio
-  position: relative;
-  overflow: hidden; // Hide parts of images outside the container
+  max-width: 700px;                     // Adjust max width as needed
+  aspect-ratio: 16 / 9;                 // Maintain aspect ratio
+  position: relative;                   // Essential for absolute positioning
+  overflow: hidden;                     // Hide content outside container
 
-  // --- Border Image ---
+  // --- Decorative Border ---
   border: $border-thickness solid transparent;
-  // IMPORTANT: Replace 'border-texture.png' with your actual image file name
-  // Make sure this texture exists in 'public/resources/textures/'
   border-image-source: url('/resources/textures/border-texture.png');
-  border-image-slice: $border-image-slice;
+  border-image-slice: $border-image-slice fill;
   border-image-width: $border-thickness;
   border-image-outset: 0;
-  border-image-repeat: stretch; // or round, repeat
+  border-image-repeat: stretch;
 
-  // --- Pause on Hover ---
-  &:hover .imagini-animatie {
+  // --- Pause Animation on Hover ---
+  &:hover .imagini-animatie .slide-img-animat {
     animation-play-state: paused;
   }
 }
 
+// --- Inner Container for Slides ---
 .imagini-animatie {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
+// --- Individual Slide Styling ---
 .slide-img-animat {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; // Cover the container without distortion
-  opacity: 0; // Start hidden
-  // Start clipped vertically from center
-  clip-path: inset(50% 0 50% 0);
-  // Apply the animation - properties will be set per child
-  animation-name: galerie-clip-reveal-hide;
-  animation-timing-function: linear; // Use linear for smooth transitions between keyframes
+  object-fit: cover;                     // Cover container maintaining aspect ratio
+  opacity: 0;                            // Start invisible
+  clip-path: inset(50% 0 50% 0);         // Start clipped from middle
+  z-index: 1;                            // Base z-index
+
+  // --- Animation Properties ---
+  animation-name: galerie-layered-transition;
+  animation-timing-function: ease;       // Smooth easing for better transitions
   animation-iteration-count: infinite;
   animation-duration: $total-animation-duration;
-  animation-fill-mode: forwards; // Keep the state of the last keyframe (though infinite loops)
+  animation-fill-mode: forwards;         // Maintain final state (important for looping)
 
-  // --- Dynamic Animation Delay per Image ---
+  // --- Dynamic Delay for Each Image ---
   @for $i from 1 through $numar-imagini {
     &:nth-child(#{$i}) {
-      // Calculate the delay for this specific image
-      $delay: ($i - 1) * $slide-duration;
-      animation-delay: $delay;
+      animation-delay: ($i - 1) * $slide-duration;  // Stagger animations
     }
   }
 }
 
-// --- Keyframe Animation ---
-@keyframes galerie-clip-reveal-hide {
-  // Start: Image becomes active (opacity 1), starts revealing
-  0% {
+.slide-img-animat::after {
+  content: var(--slide-caption);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+// --- Keyframes for Layered Transition Animation ---
+@keyframes galerie-layered-transition {
+  // Initial state - invisible and clipped
+  0% { 
+    opacity: 0;
+    clip-path: inset(50% 0 50% 0);
+    z-index: 1;
+  }
+
+  // Appear and start expanding
+  #{1%} {
     opacity: 1;
-    clip-path: inset(50% 0 50% 0); // Clipped
+    clip-path: inset(50% 0 50% 0);
+    z-index: 10;  // Move above other images
   }
-  // Reveal phase
-  #{$transition-percentage} {
+
+  // Fully expanded
+  #{$transition-percentage / 2}% {
     opacity: 1;
-    clip-path: inset(0% 0 0% 0); // Fully revealed
+    clip-path: inset(0 0 0 0);
+    z-index: 10;
   }
-  // Fully visible phase (duration calculated based on total time and number of images)
-  #{100% / $numar-imagini - $transition-percentage} {
+
+  // Stay fully visible for most of its time slot
+  #{100% / $numar-imagini - 2%} {
     opacity: 1;
-    clip-path: inset(0% 0 0% 0); // Stays fully visible
+    clip-path: inset(0 0 0 0);
+    z-index: 10;
   }
-  // Start hiding phase
-  #{100% / $numar-imagini} {
-    opacity: 0; // Fade out while clipping
-    clip-path: inset(50% 0 50% 0); // Clip back to center
+
+  // Prepare for next image by lowering z-index
+  #{100% / $numar-imagini - 1%} {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    z-index: 5;
   }
-  // Remainder of the time (until next image starts): Stay hidden
+
+  // At end of cycle start transitioning to invisible 
+  #{100% - 3%} {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    z-index: 1;
+  }
+
+  // Reset to initial state before next cycle
   100% {
     opacity: 0;
     clip-path: inset(50% 0 50% 0);
+    z-index: 1;
   }
 }
 
 // --- Responsive Hiding ---
-// Hide gallery on medium and small screens (adjust breakpoint as needed)
-@media (max-width: 992px) { // Example breakpoint for medium/small
+@media (max-width: 992px) {
   #galerie-animata-container {
-    display: none;
+    display: none;  // Hide on smaller screens
   }
 }
