@@ -1,0 +1,13 @@
+<% if (locals.imaginiAnimate && locals.imaginiAnimate.length> 0) { %>
+    <div id="galerie-animata-container" aria-label="Galerie animată de instrumente">
+        <div class="imagini-animatie">
+            <% imaginiAnimate.forEach((img, index)=> { %>
+                <img src="<%= img.cale_completa %>" alt="<%= img.titlu %> - <%= img.text_descriere %>"
+                    title="<%= img.titlu %>" class="slide-img-animat">
+                <% }); %>
+        </div>
+    </div>
+    <% } else { %>
+        <!-- Optional: Message if no images are loaded -->
+        <!-- <p>Galeria animată nu este disponibilă momentan.</p> -->
+        <% } %>

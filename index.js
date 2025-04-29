@@ -12,29 +12,40 @@ const app = express();
 let obGlobal = {
     obErori: null,
     folderScss: path.join(__dirname, "scss"),
-    folderCss: path.join(__dirname, "public/css")
+    folderCss: path.join(__dirname, "public/css"),
+    folderCssDinamica: path.join(__dirname, "public/css/dinamica"), // Folder for dynamically generated CSS
+    fisierScssGalerie: path.join(__dirname, "scss", "galerie-animata.scss"), // Specific SCSS for animated gallery
+    fisierCssGalerieDinamica: path.join(__dirname, "public/css/dinamica", "galerie-animata.css") // Specific CSS output for animated gallery
 };
 
 // Verificare și creare foldere necesare
-const vect_foldere = ["temp", "public/resources/galerie", "backup"];
+const vect_foldere = ["temp", "public/resources/galerie", "backup", "public/resources/textures", obGlobal.folderCssDinamica]; // Add dynamic CSS folder here
 
 // Iterăm prin vector și verificăm/creăm fiecare folder
 for (let folder of vect_foldere) {
-    // Construim calea completă folosind path.join()
-    const folderPath = path.join(__dirname, folder);
+    // Construim calea completă folosind path.join() - check if already absolute
+    const folderPath = path.isAbsolute(folder) ? folder : path.join(__dirname, folder);
 
     // Verificăm dacă folderul există
     if (!fs.existsSync(folderPath)) {
         // Dacă nu există, îl creăm
-        console.log(`Folderul ${folder} nu există. Se creează...`);
+        console.log(`Folderul ${path.basename(folderPath)} nu există. Se creează...`);
         fs.mkdirSync(folderPath, { recursive: true });
-        console.log(`Folderul ${folder} a fost creat cu succes!`);
+        console.log(`Folderul ${path.basename(folderPath)} a fost creat cu succes!`);
     } else {
-        console.log(`Folderul ${folder} există deja.`);
+        console.log(`Folderul ${path.basename(folderPath)} există deja.`);
     }
 }
 
 console.log('Procesul de verificare/creare a folderelor s-a finalizat.');
+
+// Create the views/partials directory if it doesn't exist
+const partialsDir = path.join(__dirname, "views", "partials");
+if (!fs.existsSync(partialsDir)) {
+    fs.mkdirSync(partialsDir, { recursive: true });
+    console.log(`Created partials directory at ${partialsDir}`);
+}
+
 
 /**
  * Funcția pentru compilarea unui fișier SCSS în CSS
@@ -45,6 +56,12 @@ function compileazaScss(caleScss, caleCss) {
     // Verifică dacă calea către scss este absolută sau relativă
     if (!path.isAbsolute(caleScss)) {
         caleScss = path.join(obGlobal.folderScss, caleScss);
+    }
+
+    // Skip the dynamic gallery file in the general compilation
+    if (caleScss === obGlobal.fisierScssGalerie) {
+        console.log(`Skipping dynamic file in general compilation: ${path.basename(caleScss)}`);
+        return;
     }
 
     // Verificăm dacă fișierul scss există
@@ -82,16 +99,17 @@ function compileazaScss(caleScss, caleCss) {
     if (fs.existsSync(caleCss)) {
         // Creăm calea pentru backup
         const numeFisierCss = path.basename(caleCss);
-        const caleCssBackup = path.join(__dirname, "backup", "resurse/css", numeFisierCss);
-        const dirCaleCssBackup = path.dirname(caleCssBackup);
+        // Make backup path more robust
+        const backupDir = path.join(__dirname, "backup", "resurse", "css");
+        const caleCssBackup = path.join(backupDir, numeFisierCss);
 
         // Creăm folderele necesare pentru backup
-        if (!fs.existsSync(dirCaleCssBackup)) {
+        if (!fs.existsSync(backupDir)) {
             try {
-                fs.mkdirSync(dirCaleCssBackup, { recursive: true });
-                console.log(`Folderul pentru backup CSS a fost creat: ${dirCaleCssBackup}`);
+                fs.mkdirSync(backupDir, { recursive: true });
+                console.log(`Folderul pentru backup CSS a fost creat: ${backupDir}`);
             } catch (err) {
-                console.error(`Eroare la crearea folderului pentru backup: ${dirCaleCssBackup}`, err);
+                console.error(`Eroare la crearea folderului pentru backup: ${backupDir}`, err);
             }
         }
 
@@ -120,8 +138,9 @@ function compileazaScss(caleScss, caleCss) {
     }
 }
 
+
 /**
- * Funcție pentru compilarea tuturor fișierelor scss
+ * Funcție pentru compilarea tuturor fișierelor scss (statice)
  */
 function compileazaToateScssurile() {
     // Verificăm dacă folderul scss există
@@ -132,12 +151,17 @@ function compileazaToateScssurile() {
         // Filtrăm doar fișierele cu extensia .scss
         let fisiereSCSS = fisiere.filter(f => path.extname(f).toLowerCase() === '.scss');
 
-        // Compilăm fiecare fișier scss
+        let compiledCount = 0;
+        // Compilăm fiecare fișier scss (funcția compileazaScss va sări peste cel dinamic)
         fisiereSCSS.forEach(fisier => {
-            compileazaScss(fisier);
+            // Check if it's the dynamic file before compiling
+             if (path.join(obGlobal.folderScss, fisier) !== obGlobal.fisierScssGalerie) {
+                compileazaScss(fisier);
+                compiledCount++;
+            }
         });
 
-        console.log(`S-au compilat ${fisiereSCSS.length} fișiere scss.`);
+        console.log(`S-au compilat ${compiledCount} fișiere scss statice.`);
     } else {
         console.error(`Folderul scss nu există: ${obGlobal.folderScss}`);
         // Creăm folderul scss dacă nu există
@@ -151,7 +175,7 @@ function compileazaToateScssurile() {
 }
 
 /**
- * Funcție pentru urmărirea modificărilor în folderul scss
+ * Funcție pentru urmărirea modificărilor în folderul scss (pentru fișiere statice)
  */
 function urmaresteFolderScss() {
     // Verificăm dacă folderul scss există
@@ -160,12 +184,14 @@ function urmaresteFolderScss() {
 
         // Folosim fs.watch pentru a monitoriza modificările
         fs.watch(obGlobal.folderScss, (eveniment, numeFisier) => {
-            // Verificăm dacă este un fișier scss
-            if (path.extname(numeFisier).toLowerCase() === '.scss') {
-                console.log(`Modificare detectată la fișierul: ${numeFisier}`);
-
-                // Recompilăm fișierul modificat
+            // Verificăm dacă este un fișier scss și NU este cel dinamic
+            const fullPath = path.join(obGlobal.folderScss, numeFisier);
+            if (numeFisier && path.extname(numeFisier).toLowerCase() === '.scss' && fullPath !== obGlobal.fisierScssGalerie) {
+                console.log(`Modificare detectată la fișierul static: ${numeFisier}`);
+                // Recompilăm fișierul modificat (static)
                 compileazaScss(numeFisier);
+            } else if (numeFisier && fullPath === obGlobal.fisierScssGalerie) {
+                 console.log(`Modificare detectată la fișierul dinamic ${numeFisier}, dar recompilarea se face la request.`);
             }
         });
     } else {
@@ -176,6 +202,56 @@ function urmaresteFolderScss() {
 // Apelăm compilarea inițială și pornirea monitorizării modificărilor
 compileazaToateScssurile();
 urmaresteFolderScss();
+
+
+/**
+ * Compilează SCSS-ul specific pentru galeria animată, injectând variabile.
+ * @param {number} numarImagini - Numărul de imagini din galerie.
+ * @param {number} slideDurationSeconds - Durata afișării unei imagini (în secunde).
+ * @returns {string|null} Calea relativă către fișierul CSS generat sau null în caz de eroare.
+ */
+function compileazaGalerieDinamicaScss(numarImagini, slideDurationSeconds) {
+    try {
+        console.log(`Compiling dynamic gallery CSS for ${numarImagini} images.`);
+        if (!fs.existsSync(obGlobal.fisierScssGalerie)) {
+            console.error(`ERROR: Gallery SCSS file not found: ${obGlobal.fisierScssGalerie}`);
+            return null;
+        }
+
+        // Define SASS variables to prepend
+        const sassVariables = `
+            $numar-imagini: ${numarImagini};
+            $slide-duration: ${slideDurationSeconds}s;
+        `;
+
+        // Read the base SCSS content
+        const sassContent = fs.readFileSync(obGlobal.fisierScssGalerie, 'utf8');
+
+        // Combine variables and base content
+        const finalSass = sassVariables + sassContent;
+
+        // Compile the combined SASS data
+        const rezCompilare = sass.renderSync({
+            data: finalSass,
+            outputStyle: 'compressed',
+            includePaths: [obGlobal.folderScss] // Allow imports from the main scss folder if needed
+        });
+
+        // Write the result to the dynamic CSS file
+        fs.writeFileSync(obGlobal.fisierCssGalerieDinamica, rezCompilare.css);
+        console.log(`Dynamic gallery CSS compiled successfully to: ${obGlobal.fisierCssGalerieDinamica}`);
+
+        // Return the relative path for use in HTML
+        const publicDir = path.join(__dirname, 'public');
+        const relativePath = path.relative(publicDir, obGlobal.fisierCssGalerieDinamica).replace(/\\/g, "/"); // Ensure forward slashes
+        return "/" + relativePath; // Prepend '/' for root-relative path
+
+    } catch (err) {
+        console.error(`ERROR compiling dynamic gallery SCSS:`, err);
+        return null;
+    }
+}
+
 
 // Setarea motorului de template la EJS
 app.set('view engine', 'ejs');
@@ -214,6 +290,17 @@ try {
     // Vom construi calea completă doar când renderăm pagina
 } catch (err) {
     console.error("Eroare la încărcarea fișierului de erori:", err);
+    // Setăm un obiect de erori minimal dacă fișierul lipsește sau e invalid
+     obGlobal.obErori = {
+        cale_baza: "resources/images/errors/", // Cale default
+        eroare_default: {
+            titlu: "Eroare server",
+            text: "Ne cerem scuze, a apărut o problemă.",
+            imagine: "error-default.png",
+            identificator: 500
+        },
+        info_erori: []
+    };
 }
 
 // Helper function to determine current season
@@ -255,11 +342,16 @@ async function generateResizedImages(imagePath, outputDir) {
     }
 }
 
-// Function to prepare gallery data
-async function prepareGalleryData() {
+// Function to prepare *static* gallery data (seasonal)
+async function prepareStaticGalleryData() { // Renamed for clarity
     try {
         // Read gallery data
-        const galerieData = JSON.parse(fs.readFileSync(path.join(__dirname, 'galerie.json')));
+        const galerieDataPath = path.join(__dirname, 'galerie.json');
+         if (!fs.existsSync(galerieDataPath)) {
+             console.warn("galerie.json not found for static gallery.");
+             return { cale_galerie: '', imagini: [] };
+         }
+        const galerieData = JSON.parse(fs.readFileSync(galerieDataPath));
         const currentSeason = getCurrentSeason();
 
         // Filter images by season and limit to 10
@@ -273,13 +365,14 @@ async function prepareGalleryData() {
             fs.mkdirSync(galerieDir, { recursive: true });
         }
 
-        // Process images
+        // Process images (generate thumbnails)
         const processPromises = filteredImages.map(img => {
             const imgPath = path.join(__dirname, 'public', galerieData.cale_galerie, img.cale_fisier);
             if (fs.existsSync(imgPath)) {
+                // Pass the base directory where thumbnails should be saved
                 return generateResizedImages(imgPath, galerieDir);
             }
-            return Promise.resolve();
+            return Promise.resolve(); // Resolve immediately if image doesn't exist
         });
 
         await Promise.all(processPromises);
@@ -287,9 +380,10 @@ async function prepareGalleryData() {
         return {
             cale_galerie: galerieData.cale_galerie,
             imagini: filteredImages
+            // Removed animation params as they belong to the animated gallery logic now
         };
     } catch (err) {
-        console.error('Error preparing gallery data:', err);
+        console.error('Error preparing static gallery data:', err);
         return {
             cale_galerie: '',
             imagini: []
@@ -302,39 +396,39 @@ function afiseazaEroare(res, identificator = undefined, titluArg = undefined, te
     let eroare;
 
     if (obGlobal.obErori) {
+         let eroareGasita = null;
         if (identificator) {
-            // Căutăm eroarea cu identificatorul dat
-            const eroareGasita = obGlobal.obErori.info_erori.find(err => err.identificator === identificator);
-            eroare = eroareGasita || obGlobal.obErori.eroare_default;
-        } else {
-            // Dacă nu este dat identificatorul, folosim eroarea default
-            eroare = obGlobal.obErori.eroare_default;
+            // Căutăm eroarea cu identificatorul dat (care este un cod de status numeric)
+            eroareGasita = obGlobal.obErori.info_erori.find(err => err.identificator === identificator);
         }
+        eroare = eroareGasita || obGlobal.obErori.eroare_default;
+
     } else {
-        // Fallback în caz că nu avem configurație JSON
+        // Fallback minimal dacă obGlobal.obErori nu a fost setat (improbabil după corecția de mai sus)
         eroare = {
             titlu: "Eroare",
             text: "A apărut o eroare!",
-            imagine: "error-default.jpg"
+            imagine: "error-default.png",
+            identificator: 500,
+            status: 500 // Adaugam status explicit
         };
     }
+
+    // Folosim identificatorul numeric și ca status HTTP
+    const statusFinal = identificator || eroare.identificator || 500;
+    res.status(statusFinal);
+
 
     // Pentru fiecare proprietate, dacă argumentul este dat, are prioritate
     const titluFinal = titluArg !== undefined ? titluArg : eroare.titlu;
     const textFinal = textArg !== undefined ? textArg : eroare.text;
+    // Imaginea e relativă la calea de bază
     const imagineFinal = imagineArg !== undefined ? imagineArg : eroare.imagine;
 
-    // Setăm statusul răspunsului dacă eroarea definește status și identificator
-    if (eroare.status && eroare.identificator) {
-        res.status(eroare.identificator);
-    }
-
     // Construim calea către imagine - important pentru afișarea corectă
-    const caleImagine = obGlobal.obErori ?
-        ("/" + obGlobal.obErori.cale_baza + imagineFinal) :
-        ("/resources/" + imagineFinal);
+    const caleImagine = "/" + path.join(obGlobal.obErori.cale_baza || "resources/images/errors/", imagineFinal).replace(/\\/g, "/");
 
-    console.log("Calea imaginii de eroare:", caleImagine); // Log pentru debugging
+    console.log(`Eroare ${statusFinal}: Titlu='${titluFinal}', Imagine='${caleImagine}'`); // Log pentru debugging
 
     // Randăm pagina de eroare cu datele finale
     res.render("pages/eroare", {
@@ -342,52 +436,102 @@ function afiseazaEroare(res, identificator = undefined, titluArg = undefined, te
         titlu: titluFinal,
         text: textFinal,
         caleImagine: caleImagine,
-        currentPage: "eroare"
+        currentPage: "eroare" // Poate fi util pentru stilizare
     });
 }
 
 // Blocare acces direct la fișierele .ejs
 app.get("/*.ejs", function (req, res) {
-    afiseazaEroare(res, 400);
+    afiseazaEroare(res, 403, "Acces Interzis", "Nu aveți permisiunea să accesați direct fișierele șablon.");
 });
 
 // Ruta pentru pagina principală
 app.get(['/', '/index', '/home'], async (req, res) => {
     try {
-        const galleryData = await prepareGalleryData();
+        // --- Prepare Static (Seasonal) Gallery Data ---
+        const staticGalleryData = await prepareStaticGalleryData();
+
+        // --- Animated Gallery Logic ---
+        let imaginiAnimate = [];
+        let galerieDinamicaCssPath = null;
+        const galerieJsonPath = path.join(__dirname, 'galerie.json');
+        const defaultSlideDuration = 4; // seconds per slide
+
+        if (fs.existsSync(galerieJsonPath)) {
+            const galerieData = JSON.parse(fs.readFileSync(galerieJsonPath));
+
+            // 1. Filter for even indices
+            const imaginiEven = galerieData.imagini.filter((img, index) => index % 2 === 0);
+
+            // 2. Generate random number of images (power of 2, 2 <= N <= 16)
+            const puteriPosibile = [2, 4, 8, 16];
+            const nrImaginiAles = puteriPosibile[Math.floor(Math.random() * puteriPosibile.length)];
+
+            // 3. Select the first N images from the even-indexed list
+            const nrImaginiFinal = Math.min(nrImaginiAles, imaginiEven.length);
+             if(nrImaginiFinal < 2 && imaginiEven.length >= 2){
+                 // Ensure at least 2 images if possible, even if random choice was smaller
+                 imaginiAnimate = imaginiEven.slice(0, 2);
+             } else if (nrImaginiFinal >= 2) {
+                 imaginiAnimate = imaginiEven.slice(0, nrImaginiFinal);
+             } else {
+                 imaginiAnimate = []; // Not enough even images
+             }
+
+
+            console.log(`Selected ${imaginiAnimate.length} images for animated gallery.`);
+
+            // 4. Compile dynamic CSS if we have enough images
+            if (imaginiAnimate.length > 0) {
+                galerieDinamicaCssPath = compileazaGalerieDinamicaScss(imaginiAnimate.length, defaultSlideDuration);
+            }
+
+             // Add base path to selected images for easier use in EJS
+             imaginiAnimate = imaginiAnimate.map(img => ({
+                ...img,
+                // Construct full relative path for src attribute
+                cale_completa: "/" + path.join(galerieData.cale_galerie, img.cale_fisier).replace(/\\/g, "/")
+            }));
+
+        } else {
+            console.warn("galerie.json not found for animated gallery.");
+        }
+        // --- End Animated Gallery Logic ---
 
         res.render('pages/index', {
-            pageTitle: 'Armonia - Magazin de Instrumente Muzicale',
+            pageTitle: 'Armonia - Acasă',
             currentPage: 'home',
             ip: req.ip,
-            ...galleryData
+            // Static gallery data
+            cale_galerie: staticGalleryData.cale_galerie,
+            imagini: staticGalleryData.imagini, // Renamed from ...galleryData
+            // Animated gallery data
+            imaginiAnimate: imaginiAnimate,
+            galerieDinamicaCssPath: galerieDinamicaCssPath,
         });
     } catch (err) {
         console.error('Error processing home page:', err);
-        res.render('pages/index', {
-            pageTitle: 'Armonia - Magazin de Instrumente Muzicale',
-            currentPage: 'home',
-            ip: req.ip,
-            cale_galerie: '',
-            imagini: []
-        });
+        afiseazaEroare(res, 500, "Eroare Server", "A apărut o problemă la procesarea paginii principale.");
     }
 });
 
-// Add a route for the gallery page
+
+// Add a route for the static gallery page
 app.get('/galerie', async (req, res) => {
     try {
-        const galleryData = await prepareGalleryData();
+        // Use the function specifically for static/seasonal gallery data
+        const staticGalleryData = await prepareStaticGalleryData();
 
-        // Render gallery page
+        // Render gallery page using static data
         res.render('pages/galerie', {
-            pageTitle: 'Galerie - Armonia',
+            pageTitle: 'Galerie Sezonieră - Armonia', // Adjusted title
             currentPage: 'galerie',
-            ...galleryData
+            cale_galerie: staticGalleryData.cale_galerie,
+            imagini: staticGalleryData.imagini
         });
     } catch (err) {
-        console.error('Error processing gallery:', err);
-        afiseazaEroare(res);
+        console.error('Error processing static gallery page:', err);
+        afiseazaEroare(res, 500, "Eroare Server", "Nu am putut încărca galeria.");
     }
 });
 
@@ -417,15 +561,22 @@ app.get('/blog', (req, res) => {
 app.get("/*", (req, res) => {
     // Remove the initial "/" to get the page name
     const pagina = req.path.substring(1);
+    // Basic security check - avoid directory traversal etc.
+    if (pagina.includes("..") || pagina.includes("/") || pagina.startsWith(".")) {
+         afiseazaEroare(res, 400, "Cerere Invalidă", "Calea solicitată nu este validă.");
+         return;
+    }
+
     res.render(`pages/${pagina}`, {
         pageTitle: `${pagina.charAt(0).toUpperCase() + pagina.slice(1)} - Armonia`,
         currentPage: pagina
     }, (err, rezultatRandare) => {
         if (err) {
-            if (err.message.startsWith("Failed to lookup view")) {
-                afiseazaEroare(res, 404);
+            if (err.message.includes("Failed to lookup view") || err.code === 'ENOENT') {
+                afiseazaEroare(res, 404, "Pagină Negăsită", `Pagina "${pagina}" nu a fost găsită.`);
             } else {
-                afiseazaEroare(res);
+                console.error(`Eroare la randarea paginii ${pagina}:`, err);
+                afiseazaEroare(res, 500); // Generic server error for other render issues
             }
         } else {
             res.send(rezultatRandare);
@@ -433,9 +584,9 @@ app.get("/*", (req, res) => {
     });
 });
 
-// Handler pentru toate rutele neasociate - afișează eroare 404
+// Handler pentru toate rutele neasociate (care nu se potrivesc cu /* de mai sus, ex. POST la o rută GET)
 app.use((req, res) => {
-    afiseazaEroare(res, 404);
+    afiseazaEroare(res, 404, "Resursă Negăsită", "Metoda sau resursa solicitată nu există.");
 });
 
 // Definirea portului pe care va asculta serverul
