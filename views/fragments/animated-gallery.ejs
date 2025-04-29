@@ -3,10 +3,105 @@
         <div class="imagini-animatie">
             <% imaginiAnimate.forEach((img, index)=> { %>
                 <img src="<%= img.cale_completa %>" alt="<%= img.titlu %> - <%= img.text_descriere %>"
-                    title="<%= img.titlu %>" class="slide-img-animat">
+                    title="<%= img.titlu %>" class="slide-img-animat" data-index="<%= index %>"
+                    data-title="<%= img.titlu %>">
                 <% }); %>
         </div>
+        <div id="galerie-caption"></div>
+
+        <!-- Store image data for JavaScript -->
+        <script>
+            // Store the image data in a global variable
+            window.galerieAnimataImages = [
+                <% imaginiAnimate.forEach((img, index) => { %>
+                {
+                    title: "<%= img.titlu %>",
+                    description: "<%= img.text_descriere %>",
+                    index: <%= index %>
+                    }<%= index < imaginiAnimate.length - 1 ? ',' : '' %>
+                <% }); %>
+            ];
+
+            // Calculate timing based on number of images
+            window.galerieAnimataTiming = {
+                totalImages: <%= imaginiAnimate.length %>,
+                slideDuration: <%= locals.slideDuration || 2 %>, // in seconds, matching SCSS $slide-duration
+                totalDuration: <%= imaginiAnimate.length %> * (<%= locals.slideDuration || 2 %>) // in seconds
+            };
+        </script>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('galerie-animata-container');
+            if (!container) return;
+
+            const captionElement = document.getElementById('galerie-caption');
+            if (!captionElement) return;
+
+            const imageData = window.galerieAnimataImages || [];
+            if (imageData.length === 0) return;
+
+            const timing = window.galerieAnimataTiming || {
+                totalImages: imageData.length,
+                slideDuration: 4,
+                totalDuration: imageData.length * 4
+            };
+
+            // Set initial caption
+            captionElement.textContent = imageData[0].title;
+
+            // Current slide index
+            let currentIndex = 0;
+
+            // Function to update caption
+            function updateCaption(index) {
+                if (index !== currentIndex) {
+                    currentIndex = index;
+
+                    // Add animation class
+                    captionElement.classList.add('caption-changing');
+
+                    // Update text after short delay (during fade out)
+                    setTimeout(() => {
+                        captionElement.textContent = imageData[index].title;
+                        captionElement.classList.remove('caption-changing');
+                    }, 300);
+                }
+            }
+
+            // Calculate which slide should be visible based on elapsed time
+            function updateSlideBasedOnTime() {
+                // Calculate time position in the full animation cycle
+                const now = Date.now();
+                const cycleTime = (now / 1000) % timing.totalDuration;
+
+                // Calculate which slide should be visible
+                const slideIndex = Math.floor(cycleTime / timing.slideDuration) % timing.totalImages;
+
+                updateCaption(slideIndex);
+            }
+
+            // Update caption every second
+            const captionInterval = setInterval(updateSlideBasedOnTime, 1000);
+
+            // Stop updating when page is hidden
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    clearInterval(captionInterval);
+                } else {
+                    // Restart interval when page becomes visible again
+                    clearInterval(captionInterval);
+                    captionInterval = setInterval(updateSlideBasedOnTime, 1000);
+                }
+            });
+
+            // Clean up on unload
+            window.addEventListener('beforeunload', function () {
+                clearInterval(captionInterval);
+            });
+        });
+    </script>
     <% } else { %>
         <!-- Optional: Message if no images are loaded -->
         <!-- <p>Galeria animată nu este disponibilă momentan.</p> -->
