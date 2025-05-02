@@ -1,0 +1,125 @@
+/* Grid layout pentru conținutul din main */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas:
+        "zone1 zone1 zone1 zone1"
+        "zone3 zone2 zone2 zone4"
+        "zone8 zone8 zone8 zone8"
+        "zone7 zone7 zone5 zone6";
+    gap: var(--grid-gap-large);
+    padding: var(--grid-gap-large);
+}
+
+.zone {
+    background-color: var(--background-header);
+    color: var(--text-light);
+    /* Izolare vizuală a zonelor */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    padding: var(--zone-padding);
+    text-align: center;
+}
+
+/* Mapare zone pe grid */
+.zone1 {
+    grid-area: zone1;
+}
+
+.zone2 {
+    grid-area: zone2;
+}
+
+.zone3 {
+    grid-area: zone3;
+}
+
+.zone4 {
+    grid-area: zone4;
+}
+
+.zone5 {
+    grid-area: zone5;
+}
+
+.zone6 {
+    grid-area: zone6;
+}
+
+.zone7 {
+    grid-area: zone7;
+}
+
+.zone8 {
+    grid-area: zone8;
+}
+
+/* Layout pentru ecrane medii */
+@media (max-width: 1024px) {
+    body {
+        margin-left: var(--page-padding-medium);
+        margin-right: var(--page-padding-medium);
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas:
+            "zone1 zone1 zone1"
+            "zone3 zone2 zone4"
+            "zone8 zone8 zone8"
+            "zone7 zone5 zone6";
+        gap: var(--grid-gap-medium);
+        padding: var(--grid-gap-medium);
+    }
+}
+
+/* Layout pentru ecrane mici - stacking vertical */
+@media (max-width: 600px) {
+    body {
+        margin-left: var(--page-padding-small);
+        margin-right: var(--page-padding-small);
+    }
+
+    .grid-container {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "zone1"
+            "zone3"
+            "zone2"
+            "zone4"
+            "zone8"
+            "zone7"
+            "zone5"
+            "zone6";
+        gap: var(--grid-gap-small);
+        padding: var(--grid-gap-small);
+    }
+}
+
+html {
+    font-size: 18px;
+    /* Ecran mare */
+    transition: font-size 0.3s ease;
+}
+
+/* Pe ecran mediu */
+@media (max-width: 1024px) {
+    html {
+        font-size: 17px;
+    }
+}
+
+/* Pe ecran mic */
+@media (max-width: 600px) {
+    html {
+        font-size: 16px;
+    }
+
+    /* Dezactivăm animațiile și tranzițiile */
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}

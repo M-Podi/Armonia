@@ -1,0 +1,118 @@
+:root {
+    /* Culori principale */
+    --primary-color: #1B3B6F;
+    --secondary-color: #C9A227;
+    --complement-color: #F7E6D0;
+    --accent-color: #6D2E46;
+    --neutral-color: #7C8B7F;
+
+    /* Utilizari specifice */
+    --background-main: var(--complement-color);
+    --background-header: var(--primary-color);
+    --background-footer: var(--primary-color);
+    --text-primary: var(--primary-color);
+    --text-light: var(--complement-color);
+    --border-color: var(--secondary-color);
+    --highlight-color: var(--accent-color);
+    --nav-hover: var(--secondary-color);
+    --section-background: var(--neutral-color);
+
+    /* Variabile pentru spatiere & izolare */
+    --page-padding-large: 20px;
+    --page-padding-medium: 15px;
+    --page-padding-small: 10px;
+    --grid-gap-large: 10px;
+    --grid-gap-medium: 8px;
+    --grid-gap-small: 5px;
+    --zone-padding: 10px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-main);
+    color: var(--text-primary);
+    /* Spatiere pe laturile paginii */
+    margin-left: var(--page-padding-large);
+    margin-right: var(--page-padding-large);
+}
+
+header,
+footer {
+    background-color: var(--background-header);
+    color: var(--text-light);
+    /* Izolare vizuala */
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: var(--zone-padding);
+}
+
+nav a:hover {
+    color: var(--nav-hover);
+}
+
+section {
+    border: 1px solid var(--border-color);
+}
+
+h1,
+h2,
+h3 {
+    color: var(--highlight-color);
+}
+
+/* Elemente media */
+img,
+video,
+iframe {
+    width: 100%;
+    max-width: 100%;
+    min-width: 200px;
+}
+
+/* STILIZARE MATEMATICA */
+math {
+    font-size: 1.2rem;
+    background-color: rgba(247, 230, 208, 0.6);
+    padding: 10px 20px;
+    border-radius: 8px;
+    border-left: 4px solid var(--secondary-color);
+    margin: 15px 0;
+}
+
+math mi {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-style: italic;
+    font-size: 1.3em;
+}
+
+.container {
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.text,
+.reflection {
+    font-weight: bold;
+    font-family: serif;
+    color: black;
+    transition: color 0.5s ease;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.text {
+    transform: rotate(-5deg);
+}
+
+.reflection {
+    transform: rotate(5deg) scaleX(-1);
+}
+
+.container:hover .text,
+.container:hover .reflection {
+    color: #0066cc;
+}

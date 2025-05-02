@@ -1,0 +1,66 @@
+/* Table styling */
+.table-container {
+    overflow-x: auto; /* Horizontal scrollbar for small screens */
+    margin-bottom: 2rem;
+}
+
+#popular-instruments {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 2px; /* Space between cells */
+    border: 1px solid var(--border-color);
+}
+
+/* Cell styling */
+#popular-instruments th,
+#popular-instruments td {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+/* Table sections styling */
+#popular-instruments thead {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+#popular-instruments tfoot {
+    background-color: var(--neutral-color);
+    color: var(--text-light);
+    font-weight: bold;
+}
+
+/* Caption below table */
+#popular-instruments caption {
+    caption-side: bottom;
+    margin-top: 10px;
+    color: var(--highlight-color);
+    font-weight: bold;
+    padding: 8px;
+}
+
+/* Alternating row backgrounds */
+#popular-instruments tbody tr:nth-child(odd) {
+    background-color: rgba(124, 139, 127, 0.2); /* neutral-color with transparency */
+}
+
+#popular-instruments tbody tr:nth-child(even) {
+    background-color: rgba(201, 162, 39, 0.1); /* secondary-color with transparency */
+}
+
+/* Row hover effect */
+#popular-instruments tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+#popular-instruments tbody tr:hover {
+    background-color: rgba(109, 46, 70, 0.2); /* accent-color with transparency */
+}
+
+/* Small screen adjustments */
+@media (max-width: 600px) {
+    #popular-instruments {
+        border-spacing: 0; /* Remove space between cells */
+    }
+}

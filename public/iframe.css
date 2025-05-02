@@ -1,0 +1,72 @@
+/* IFRAME STYLE */
+
+/* Stilizarea iframe-ului cu nuante diferite pentru laturi */
+#video-frame {
+    border-style: solid;
+    border-width: 4px;
+    border-color: rgba(201, 162, 39, 0.1) var(--complement-color) var(--complement-color) rgba(201, 162, 39, 0.1);
+    margin-bottom: 0;
+}
+
+#servicii div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+/* Container pentru linkuri folosind flexbox */
+#servicii div>p:last-child {
+    display: flex;
+    width: 100%;
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0;
+    background-color: var(--primary-color);
+    gap: 2px;
+    /* Ascunderea separatorului text "|" dintre linkuri */
+    font-size: 0;
+}
+
+/* Stilizarea linkurilor ca butoane */
+#servicii div>p:last-child a {
+    overflow: hidden;
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 16px;
+    color: var(--text-light);
+    background: linear-gradient(to bottom, var(--neutral-color), var(--primary-color));
+    text-decoration: none;
+
+    /* Rotunjirea colțurilor de jos și outline */
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border: 3px solid var(--complement-color);
+    outline: 2px solid rgb(0, 0, 0);
+    box-shadow: 0 0 0 5px var(--complement-color);
+    margin: 5px;
+    z-index: 1;
+}
+
+/* Pseudo-element pentru gradientul de hover */
+#servicii div>p:last-child a::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #ffffff, #3472d6);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+/* La hover, se face fade in-ul gradientului de hover */
+#servicii div>p:last-child a:hover::after {
+    opacity: 1;
+}
+
+
+
