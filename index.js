@@ -578,6 +578,220 @@ app.get('/blog', (req, res) => {
     });
 });
 
+
+
+// Rută pentru pagina de produse
+app.get('/produse', async (req, res) => {
+    try {
+        // Parametri pentru filtrare
+        const filtru = {};
+        const categorie_selectata = req.query.categorie || null;
+        if (categorie_selectata) filtru.categorie = categorie_selectata;
+        if (req.query.tip) filtru.tip = req.query.tip;
+        if (req.query.pret_min) filtru.pret_min = parseFloat(req.query.pret_min);
+        if (req.query.pret_max) filtru.pret_max = parseFloat(req.query.pret_max);
+        if (req.query.an_fabricatie) filtru.an_fabricatie = parseInt(req.query.an_fabricatie);
+        if (req.query.electric === 'true') filtru.electric = req.query.electric;
+
+        // Parametri pentru sortare
+        const sortare = req.query.sortare || 'data_adaugare_desc';
+        
+        // Parametri pentru paginare
+        const produsePerPagina = 9;
+        const paginaCurenta = parseInt(req.query.pagina) || 1;
+        const offset = (paginaCurenta - 1) * produsePerPagina;
+        
+        // Obținem toate categoriile de instrumente din ENUM categ_instrument
+        const categoriiResult = await client.query(`SELECT unnest(enum_range(NULL::categ_instrument)) AS categorie`);
+        const categorii_instrumente = categoriiResult.rows.map(row => row.categorie);
+        
+        // Obținem toate tipurile de instrumente din ENUM tip_instrument
+        const tipuriResult = await client.query(`SELECT unnest(enum_range(NULL::tip_instrument)) AS tip`);
+        const tipuri_instrumente = tipuriResult.rows.map(row => row.tip);
+        
+        // Construiește interogarea SQL pentru numărul total de produse
+        let countQuery = 'SELECT COUNT(*) FROM instrumente WHERE 1=1';
+        let queryParams = [];
+        let paramIndex = 1;
+        
+        // Adaugă condiții pentru filtrare în query-ul de numărare
+        if (filtru.categorie) {
+            countQuery += ` AND categorie = $${paramIndex++}`;
+            queryParams.push(filtru.categorie);
+        }
+        
+        if (filtru.tip) {
+            countQuery += ` AND tip = $${paramIndex++}`;
+            queryParams.push(filtru.tip);
+        }
+        
+        if (filtru.pret_min) {
+            countQuery += ` AND pret >= $${paramIndex++}`;
+            queryParams.push(filtru.pret_min);
+        }
+        
+        if (filtru.pret_max) {
+            countQuery += ` AND pret <= $${paramIndex++}`;
+            queryParams.push(filtru.pret_max);
+        }
+        
+        if (filtru.an_fabricatie) {
+            countQuery += ` AND an_fabricatie >= $${paramIndex++}`;
+            queryParams.push(filtru.an_fabricatie);
+        }
+        
+        if (filtru.electric === 'true') {
+            countQuery += ` AND electric = $${paramIndex++}`;
+            queryParams.push(true);
+        }
+        
+        // Execută interogarea pentru numărare
+        const countResult = await client.query(countQuery, queryParams);
+        const totalInstrumente = parseInt(countResult.rows[0].count);
+        const totalPagini = Math.ceil(totalInstrumente / produsePerPagina);
+        
+        // Construiește interogarea SQL principală pentru instrumente
+        let mainQuery = 'SELECT * FROM instrumente WHERE 1=1';
+        
+        // Reutilizează aceleași condiții pentru filtrare
+        // Resetăm indexul parametrilor și array-ul de parametri pentru interogarea principală
+        queryParams = [];
+        paramIndex = 1;
+        
+        if (filtru.categorie) {
+            mainQuery += ` AND categorie = $${paramIndex++}`;
+            queryParams.push(filtru.categorie);
+        }
+        
+        if (filtru.tip) {
+            mainQuery += ` AND tip = $${paramIndex++}`;
+            queryParams.push(filtru.tip);
+        }
+        
+        if (filtru.pret_min) {
+            mainQuery += ` AND pret >= $${paramIndex++}`;
+            queryParams.push(filtru.pret_min);
+        }
+        
+        if (filtru.pret_max) {
+            mainQuery += ` AND pret <= $${paramIndex++}`;
+            queryParams.push(filtru.pret_max);
+        }
+        
+        if (filtru.an_fabricatie) {
+            mainQuery += ` AND an_fabricatie >= $${paramIndex++}`;
+            queryParams.push(filtru.an_fabricatie);
+        }
+        
+        if (filtru.electric === 'true') {
+            mainQuery += ` AND electric = $${paramIndex++}`;
+            queryParams.push(true);
+        }
+        
+        // Adaugă sortarea
+        switch(sortare) {
+            case 'nume_asc':
+                mainQuery += ' ORDER BY nume ASC';
+                break;
+            case 'nume_desc':
+                mainQuery += ' ORDER BY nume DESC';
+                break;
+            case 'pret_asc':
+                mainQuery += ' ORDER BY pret ASC';
+                break;
+            case 'pret_desc':
+                mainQuery += ' ORDER BY pret DESC';
+                break;
+            case 'an_asc':
+                mainQuery += ' ORDER BY an_fabricatie ASC NULLS LAST';
+                break;
+            case 'an_desc':
+                mainQuery += ' ORDER BY an_fabricatie DESC NULLS LAST';
+                break;
+            case 'data_adaugare_desc':
+            default:
+                mainQuery += ' ORDER BY data_adaugare DESC';
+                break;
+        }
+        
+        // Adaugă paginarea
+        mainQuery += ` LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
+        queryParams.push(produsePerPagina, offset);
+        
+        // Execută interogarea principală
+        const instrumenteResult = await client.query(mainQuery, queryParams);
+        
+        // Funcție helper pentru a construi URL-ul pentru paginare
+        const getPaginaURL = (pagina) => {
+            const urlParams = new URLSearchParams(req.query);
+            urlParams.set('pagina', pagina);
+            return `/produse?${urlParams.toString()}`;
+        };
+        
+        // Randează pagina cu datele obținute
+        res.render('pages/produse', {
+            pageTitle: 'Produse - Armonia',
+            currentPage: 'produse',
+            instrumente: instrumenteResult.rows,
+            totalInstrumente,
+            paginaCurenta,
+            totalPagini,
+            produsePerPagina,
+            filtru,
+            sortare,
+            getPaginaURL,
+            categorii_instrumente,
+            tipuri_instrumente,
+            categorie_selectata
+        });
+    } catch (err) {
+        console.error('Eroare la interogarea bazei de date pentru produse:', err);
+        afiseazaEroare(res, 500, "Eroare Server", "A apărut o problemă la încărcarea produselor. Te rugăm să încerci din nou mai târziu.");
+    }
+});
+
+// Rută pentru pagina de detalii produs
+app.get('/detalii-produs/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        
+        if (isNaN(id)) {
+            return afiseazaEroare(res, 400, "Cerere invalidă", "ID-ul produsului este invalid.");
+        }
+        
+        // Obținem toate categoriile de instrumente din ENUM categ_instrument
+        const categoriiResult = await client.query(`SELECT unnest(enum_range(NULL::categ_instrument)) AS categorie`);
+        const categorii_instrumente = categoriiResult.rows.map(row => row.categorie);
+        
+        // Interogare pentru obținerea detaliilor instrumentului
+        const result = await client.query('SELECT * FROM instrumente WHERE id = $1', [id]);
+        
+        if (result.rows.length === 0) {
+            return res.render('pages/detalii-produs', {
+                pageTitle: 'Produs Negăsit - Armonia',
+                currentPage: 'produse',
+                instrument: null,
+                categorii_instrumente
+            });
+        }
+        
+        const instrument = result.rows[0];
+        
+        // Randează pagina cu datele instrumentului
+        res.render('pages/detalii-produs', {
+            pageTitle: `${instrument.nume} - Armonia`,
+            currentPage: 'produse',
+            instrument,
+            categorii_instrumente,
+            categorie_selectata: instrument.categorie
+        });
+    } catch (err) {
+        console.error('Eroare la obținerea detaliilor produsului:', err);
+        afiseazaEroare(res, 500, "Eroare Server", "A apărut o problemă la încărcarea detaliilor produsului. Te rugăm să încerci din nou mai târziu.");
+    }
+});
+
+
 // Rută generică pentru alte pagini - trebuie să fie ultima
 app.get("/*", (req, res) => {
     // Remove the initial "/" to get the page name

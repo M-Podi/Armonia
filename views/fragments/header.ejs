@@ -27,6 +27,27 @@
             <li class="nav-item"><a href="/#instrumente" class="nav-link">Catalog instrumente</a></li>
             <li class="nav-item"><a href="/#servicii" class="nav-link">Servicii reparații</a></li>
             <li class="nav-item"><a href="/#catalog" class="nav-link">Accesorii</a></li>
+
+            <!-- Adăugare opțiune Produse cu subopțiuni pentru categorii -->
+            <li class="nav-item">
+                <a href="/produse" class="nav-link <%= currentPage === 'produse' ? 'active' : '' %>">Produse</a>
+                <ul class="submenu">
+                    <li class="submenu-item"><a href="/produse"
+                            class="submenu-link <%= !locals.categorie_selectata ? 'active' : '' %>">Toate</a></li>
+
+                    <% if(locals.categorii_instrumente && categorii_instrumente.length> 0) { %>
+                        <% categorii_instrumente.forEach(function(categorie) { %>
+                            <li class="submenu-item">
+                                <a href="/produse?categorie=<%= categorie %>"
+                                    class="submenu-link <%= locals.categorie_selectata === categorie ? 'active' : '' %>">
+                                    <%= categorie.charAt(0).toUpperCase() + categorie.slice(1) %>
+                                </a>
+                            </li>
+                            <% }); %>
+                                <% } %>
+                </ul>
+            </li>
+
             <li class="nav-item">
                 <a href="#" class="nav-link">Pagini</a>
                 <ul class="submenu">
@@ -43,7 +64,6 @@
                     </li>
                     <li class="submenu-item"><a href="/about"
                             class="submenu-link <%= currentPage === 'about' ? 'active' : '' %>">Despre noi</a></li>
-
                 </ul>
             </li>
         </ul>

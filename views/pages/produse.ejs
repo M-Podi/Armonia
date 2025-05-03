@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+    <%- include('../fragments/head') %>
+        <link rel="stylesheet" href="produse.css">
+</head>
+
+<body>
+    <%- include('../fragments/header') %>
+
+        <main>
+            <div class="products-container">
+                <h1>Instrumente Muzicale</h1>
+                <p>Explorează gama noastră variată de instrumente muzicale de înaltă calitate. Folosește filtrele pentru
+                    a
+                    găsi instrumentul perfect pentru tine.</p>
+
+                <!-- Secțiunea de filtrare conform cerințelor -->
+                <section class="filters">
+                    <h2>Filtrează produsele</h2>
+                    <div class="filter-controls">
+                        <!-- Input de tip text pentru căutare pattern de nume -->
+                        <div class="filter-group">
+                            <label for="nume-filtru">Nume instrument (suportă pattern: început*sfârșit):</label>
+                            <input type="text" id="nume-filtru" placeholder="Ex: chi*ra, *fon">
+                            <div class="error-message" id="nume-filtru-error"></div>
+                        </div>
+
+                        <!-- Două inputuri de tip range pentru preț minim și maxim -->
+                        <div class="filter-group">
+                            <label>Interval preț (lei):</label>
+                            <div class="range-container">
+                                <div class="price-range-wrapper">
+                                    <label for="pret-min-filtru">Minim:</label>
+                                    <input type="range" id="pret-min-filtru" min="0" max="10000" step="100" value="0">
+                                    <span class="range-value" id="pret-min-value">0</span>
+                                </div>
+                                <div class="price-range-wrapper">
+                                    <label for="pret-max-filtru">Maxim:</label>
+                                    <input type="range" id="pret-max-filtru" min="0" max="10000" step="100"
+                                        value="10000">
+                                    <span class="range-value" id="pret-max-value">10000</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Datalist pentru tipuri de instrumente -->
+                        <div class="filter-group">
+                            <label for="tip-filtru">Tip instrument:</label>
+                            <input list="tipuri-instrumente" id="tip-filtru" placeholder="Alege un tip...">
+                            <datalist id="tipuri-instrumente">
+                                <option value="Toate tipurile">
+                                    <% if(locals.tipuri_instrumente && tipuri_instrumente.length> 0) { %>
+                                        <% tipuri_instrumente.forEach(function(tip) { %>
+                                <option value="<%= tip.charAt(0).toUpperCase() + tip.slice(1) %>">
+                                    <% }); %>
+                                        <% } %>
+                            </datalist>
+                        </div>
+
+
+                        <!-- Grup de inputuri radio pentru anul fabricației -->
+                        <div class="filter-group">
+                            <label>An fabricație:</label>
+                            <div class="radio-group">
+                                <label>
+                                    <input type="radio" name="an-fabricatie" value="toate" checked>
+                                    Toate
+                                </label>
+                                <label>
+                                    <input type="radio" name="an-fabricatie" value="vechi">
+                                    Înainte de 2000
+                                </label>
+                                <label>
+                                    <input type="radio" name="an-fabricatie" value="noi">
+                                    După 2000
+                                </label>
+                                <label>
+                                    <input type="radio" name="an-fabricatie" value="recente">
+                                    După 2020
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Checkbox pentru electric -->
+                        <div class="filter-group">
+                            <label>Caracteristici speciale:</label>
+                            <div class="checkbox-group">
+                                <label>
+                                    <input type="checkbox" id="electric-filtru" value="electric">
+                                    Electric
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Textarea pentru căutare avansată -->
+                        <div class="filter-group">
+                            <label for="cautare-avansata">Căutare avansată (cuvinte în descriere):</label>
+                            <textarea id="cautare-avansata"
+                                placeholder="Introdu cuvinte cheie separate prin virgulă..."></textarea>
+                            <div class="error-message" id="cautare-avansata-error"></div>
+                        </div>
+
+                        <!-- Select simplu pentru categorie (caracteristică cu o singură valoare) -->
+                        <div class="filter-group">
+                            <label for="categorie-filtru">Categorie:</label>
+                            <select id="categorie-filtru">
+                                <option value="">Toate categoriile</option>
+                                <% if(locals.categorii_instrumente && categorii_instrumente.length> 0) { %>
+                                    <% categorii_instrumente.forEach(function(categorie) { %>
+                                        <option value="<%= categorie %>">
+                                            <%= categorie.charAt(0).toUpperCase() + categorie.slice(1) %>
+                                        </option>
+                                        <% }); %>
+                                            <% } %>
+                            </select>
+                        </div>
+
+                        <!-- Select multiplu -->
+                        <div class="filter-group">
+                            <label for="materiale-filtru">Materiale:</label>
+                            <select id="materiale-filtru" multiple>
+                                <option value="lemn">Lemn</option>
+                                <option value="metal">Metal</option>
+                                <option value="plastic">Plastic</option>
+                                <option value="carbon">Fibră de carbon</option>
+                                <option value="nailon">Nailon</option>
+                            </select>
+                            <small>Ține apăsat CTRL pentru selecție multiplă</small>
+                        </div>
+
+                        <!-- Butoane pentru operații -->
+                        <div class="filter-buttons">
+                            <button type="button" id="reset-filters" class="reset-button">Resetează filtre</button>
+                            <button type="button" id="filter-button" class="apply-button">Filtrează</button>
+                            <button type="button" id="sort-asc-button" class="sort-button">Sortează ↑</button>
+                            <button type="button" id="sort-desc-button" class="sort-button">Sortează ↓</button>
+                            <button type="button" id="calculate-button" class="calc-button">Calculează media
+                                prețurilor</button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="sort-container">
+                    <div class="product-count">
+                        Afișare <span id="showing-count">
+                            <%= instrumente.length %>
+                        </span> din <span id="total-count">
+                            <%= totalInstrumente %>
+                        </span> produse
+                    </div>
+                </div>
+
+                <!-- Afișarea produselor conform formatului specificat -->
+                <div class="products-grid" id="products-container">
+                    <% if (instrumente.length===0) { %>
+                        <div class="no-products">
+                            <p>Nu am găsit instrumente care să corespundă criteriilor de filtrare.</p>
+                            <a href="/produse" class="reset-link">Resetează filtrele</a>
+                        </div>
+                        <% } else { %>
+                            <% instrumente.forEach(instrument=> { %>
+                                <article id="art<%= instrument.id %>"
+                                    class="instrument-article <%= instrument.categorie %>"
+                                    data-nume="<%= instrument.nume %>" data-categorie="<%= instrument.categorie %>"
+                                    data-tip="<%= instrument.tip %>" data-pret="<%= instrument.pret %>"
+                                    data-an="<%= instrument.an_fabricatie || 0 %>"
+                                    data-electric="<%= instrument.electric ? 'da' : 'nu' %>"
+                                    data-greutate="<%= instrument.greutate %>"
+                                    data-materiale="<%= instrument.materiale ? instrument.materiale.join(',').toLowerCase() : '' %>"
+                                    data-desc-length="<%= instrument.descriere ? instrument.descriere.length : 0 %>">
+                                    <h2>
+                                        <%= instrument.nume %>
+                                    </h2>
+                                    <p class="instrument-category">
+                                        Categorie: <%= instrument.categorie.charAt(0).toUpperCase() +
+                                            instrument.categorie.slice(1) %> -
+                                            <%= instrument.tip.charAt(0).toUpperCase() + instrument.tip.slice(1) %>
+                                    </p>
+                                    <div class="instrument-description">
+                                        <%= instrument.descriere ? instrument.descriere : 'Fără descriere disponibilă.'
+                                            %>
+                                    </div>
+
+                                    <div class="instrument-details">
+                                        <div class="instrument-image-container">
+                                            <img src="<%= instrument.imagine || '/resources/default-instrument.jpg' %>"
+                                                alt="<%= instrument.nume %>" class="instrument-image">
+                                        </div>
+
+                                        <table class="instrument-characteristics">
+                                            <tbody>
+                                                <!-- Caracteristică numerică -->
+                                                <tr>
+                                                    <td>Preț</td>
+                                                    <td>
+                                                        <%= instrument.pret.toLocaleString('ro-RO') %> lei
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Caracteristică string (singură valoare) -->
+                                                <tr>
+                                                    <td>Tip</td>
+                                                    <td>
+                                                        <%= instrument.tip.charAt(0).toUpperCase() +
+                                                            instrument.tip.slice(1) %>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Caracteristică string (multiple valori) -->
+                                                <tr>
+                                                    <td>Materiale</td>
+                                                    <td>
+                                                        <% if (instrument.materiale && instrument.materiale.length> 0) {
+                                                            %>
+                                                            <%= instrument.materiale.join(', ') %>
+                                                <% } else { %>
+                                                    Nespecificat
+                                                <% } %>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Caracteristică dată -->
+                                        <tr>
+                                            <td>Data adăugare</td>
+                                            <td>
+                                                <% if (instrument.data_adaugare) { 
+                                                    let data = new Date(instrument.data_adaugare);
+                                                    let zile = [' Duminică', 'Luni' , 'Marți' , 'Miercuri' , 'Joi'
+                                                                , 'Vineri' , 'Sâmbătă' ]; let
+                                                                luni=['Ianuarie', 'Februarie' , 'Martie' , 'Aprilie'
+                                                                , 'Mai' , 'Iunie' , 'Iulie' , 'August' , 'Septembrie'
+                                                                , 'Octombrie' , 'Noiembrie' , 'Decembrie' ]; let
+                                                                formatData=`${data.getDate()}/${luni[data.getMonth()]}/${data.getFullYear()}
+                                                                (${zile[data.getDay()]})`; %>
+                                                                <time datetime="<%= data.toISOString() %>">
+                                                                    <%= formatData %>
+                                                                </time>
+                                                                <% } else { %>
+                                                                    Nespecificat
+                                                                    <% } %>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Caracteristică booleană -->
+                                                <tr>
+                                                    <td>Electric</td>
+                                                    <td>
+                                                        <%= instrument.electric ? 'Da' : 'Nu' %>
+                                                    </td>
+                                                </tr>
+
+                                                <!-- Alte caracteristici -->
+                                                <tr>
+                                                    <td>Greutate</td>
+                                                    <td>
+                                                        <%= instrument.greutate %> g
+                                                    </td>
+                                                </tr>
+
+                                                <% if (instrument.an_fabricatie) { %>
+                                                    <tr>
+                                                        <td>An fabricație</td>
+                                                        <td>
+                                                            <%= instrument.an_fabricatie %>
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="instrument-actions">
+                                        <a href="/detalii-produs/<%= instrument.id %>" class="details-button">Vezi
+                                            detalii complete</a>
+                                        <button class="wishlist-button" title="Adaugă la favorite"
+                                            onclick="toggleFavorite(this, <%= instrument.id %>)">
+                                            <i class="far fa-heart"></i>
+                                        </button>
+                                    </div>
+                                </article>
+                                <% }); %>
+                                    <% } %>
+                </div>
+
+                <% if (totalPagini> 1) { %>
+                    <div class="pagination">
+                        <% if (paginaCurenta> 1) { %>
+                            <a href="<%= getPaginaURL(paginaCurenta - 1) %>" class="page-nav" title="Pagina anterioară">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                            <% } %>
+
+                                <% for (let i=Math.max(1, paginaCurenta - 2); i <=Math.min(totalPagini, paginaCurenta +
+                                    2); i++) { %>
+                                    <a href="<%= getPaginaURL(i) %>"
+                                        class="page-num <%= i === paginaCurenta ? 'active' : '' %>">
+                                        <%= i %>
+                                    </a>
+                                    <% } %>
+
+                                        <% if (paginaCurenta < totalPagini) { %>
+                                            <a href="<%= getPaginaURL(paginaCurenta + 1) %>" class="page-nav"
+                                                title="Pagina următoare">
+                                                <i class="fas fa-chevron-right"></i>
+                                            </a>
+                                            <% } %>
+                    </div>
+                    <% } %>
+            </div>
+        </main>
+
+        <%- include('../fragments/footer') %>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Variabile pentru a stoca starea inițială a afișării
+                    let allInstruments = [];
+                    const instrumentsContainer = document.getElementById('products-container');
+
+                    // Obține toate articolele de instrumente și salvează starea inițială
+                    const instrumentArticles = document.querySelectorAll('.instrument-article');
+                    instrumentArticles.forEach(article => {
+                        allInstruments.push({
+                            element: article,
+                            originalOrder: Array.from(instrumentsContainer.children).indexOf(article)
+                        });
+                    });
+
+                    // Event listeners pentru inputurile range
+                    const pretMinRange = document.getElementById('pret-min-filtru');
+                    const pretMaxRange = document.getElementById('pret-max-filtru');
+                    const pretMinValue = document.getElementById('pret-min-value');
+                    const pretMaxValue = document.getElementById('pret-max-value');
+
+                    pretMinRange.addEventListener('input', function () {
+                        pretMinValue.textContent = this.value;
+                        // Asigură-te că minimul nu depășește maximul
+                        if (parseInt(this.value) > parseInt(pretMaxRange.value)) {
+                            pretMaxRange.value = this.value;
+                            pretMaxValue.textContent = this.value;
+                        }
+                    });
+
+                    pretMaxRange.addEventListener('input', function () {
+                        pretMaxValue.textContent = this.value;
+                        // Asigură-te că maximul nu este mai mic decât minimul
+                        if (parseInt(this.value) < parseInt(pretMinRange.value)) {
+                            pretMinRange.value = this.value;
+                            pretMinValue.textContent = this.value;
+                        }
+                    });
+
+                    // Event handlers pentru butoane
+                    document.getElementById('filter-button').addEventListener('click', applyFilters);
+                    document.getElementById('sort-asc-button').addEventListener('click', () => sortInstruments('asc'));
+                    document.getElementById('sort-desc-button').addEventListener('click', () => sortInstruments('desc'));
+                    document.getElementById('calculate-button').addEventListener('click', calculateAverage);
+                    document.getElementById('reset-filters').addEventListener('click', confirmReset);
+
+                    // Funcție pentru validarea inputurilor
+                    function validateInputs() {
+                        let isValid = true;
+                        const numeInput = document.getElementById('nume-filtru');
+                        const numeError = document.getElementById('nume-filtru-error');
+                        const cautareAvansata = document.getElementById('cautare-avansata');
+                        const cautareError = document.getElementById('cautare-avansata-error');
+
+                        // Resetare mesaje de eroare
+                        numeError.textContent = '';
+                        cautareError.textContent = '';
+
+                        // Validare input de nume (verifică dacă pattern-ul este valid)
+                        if (numeInput.value.trim() !== '') {
+                            const namePattern = numeInput.value.trim();
+                            if (namePattern.includes('*')) {
+                                const parts = namePattern.split('*');
+                                if (parts.length > 2) {
+                                    numeError.textContent = 'Pattern invalid! Poți folosi un singur * în format început*sfârșit';
+                                    isValid = false;
+                                }
+                            }
+                        }
+
+                        // Validare textarea pentru căutare avansată
+                        if (cautareAvansata.value.trim() !== '') {
+                            const keywords = cautareAvansata.value.trim().split(',');
+                            for (const keyword of keywords) {
+                                if (keyword.trim() === '') {
+                                    cautareError.textContent = 'Cuvintele cheie nu pot fi goale!';
+                                    isValid = false;
+                                    break;
+                                }
+                            }
+                        }
+
+                        return isValid;
+                    }
+
+                    // Funcție pentru aplicarea filtrelor
+                    function applyFilters() {
+                        if (!validateInputs()) {
+                            return; // Oprește execuția dacă inputurile nu sunt valide
+                        }
+
+                        const numePattern = document.getElementById('nume-filtru').value.trim();
+                        const pretMin = parseInt(document.getElementById('pret-min-filtru').value);
+                        const pretMax = parseInt(document.getElementById('pret-max-filtru').value);
+                        const tipFilter = document.getElementById('tip-filtru').value.toLowerCase();
+                        const anFabricatieFilter = document.querySelector('input[name="an-fabricatie"]:checked').value;
+                        const electricFilter = document.getElementById('electric-filtru').checked;
+                        const categorieFilter = document.getElementById('categorie-filtru').value;
+                        const cautareAvansata = document.getElementById('cautare-avansata').value.trim();
+
+                        // Obține materialele selectate
+                        const materialeFilter = Array.from(document.getElementById('materiale-filtru').selectedOptions)
+                            .map(option => option.value.toLowerCase());
+
+                        let visibleCount = 0;
+
+                        // Parcurge toate instrumentele și aplică filtrele
+                        allInstruments.forEach(({ element }) => {
+                            const nume = element.getAttribute('data-nume').toLowerCase();
+                            const pret = parseInt(element.getAttribute('data-pret'));
+                            const tip = element.getAttribute('data-tip').toLowerCase();
+                            const an = parseInt(element.getAttribute('data-an'));
+                            const electric = element.getAttribute('data-electric') === 'da';
+                            const categorie = element.getAttribute('data-categorie');
+                            const descriere = element.querySelector('.instrument-description').textContent.toLowerCase();
+                            const materiale = element.getAttribute('data-materiale');
+
+                            let arata = true;
+
+                            // Filtru după nume cu pattern
+                            if (numePattern !== '') {
+                                if (numePattern.includes('*')) {
+                                    const [inceput, sfarsit] = numePattern.split('*');
+                                    if (!((inceput === '' || nume.startsWith(inceput.toLowerCase())) &&
+                                        (sfarsit === '' || nume.endsWith(sfarsit.toLowerCase())))) {
+                                        arata = false;
+                                    }
+                                } else if (!nume.includes(numePattern.toLowerCase())) {
+                                    arata = false;
+                                }
+                            }
+
+                            // Filtru după preț
+                            if (pret < pretMin || pret > pretMax) {
+                                arata = false;
+                            }
+
+                            // Filtru după tip
+                            if (tipFilter && tipFilter !== 'toate tipurile' && !tip.includes(tipFilter)) {
+                                arata = false;
+                            }
+
+                            // Filtru după an fabricație
+                            if (anFabricatieFilter !== 'toate') {
+                                if (anFabricatieFilter === 'vechi' && an >= 2000) {
+                                    arata = false;
+                                } else if (anFabricatieFilter === 'noi' && (an < 2000 || an === 0)) {
+                                    arata = false;
+                                } else if (anFabricatieFilter === 'recente' && (an < 2020 || an === 0)) {
+                                    arata = false;
+                                }
+                            }
+
+                            // Filtru după electric
+                            if (electricFilter && !electric) {
+                                arata = false;
+                            }
+
+                            // Filtru după categorie
+                            if (categorieFilter && categorie !== categorieFilter) {
+                                arata = false;
+                            }
+
+                            // Filtru după cuvinte cheie în descriere
+                            if (cautareAvansata !== '') {
+                                const keywords = cautareAvansata.split(',').map(word => word.trim().toLowerCase());
+                                if (!keywords.some(keyword => descriere.includes(keyword))) {
+                                    arata = false;
+                                }
+                            }
+
+                            // Filtru după materiale
+                            if (materialeFilter.length > 0) {
+                                if (!materialeFilter.some(material => materiale.includes(material))) {
+                                    arata = false;
+                                }
+                            }
+
+                            // Afișare/ascundere articol
+                            if (arata) {
+                                element.style.display = 'block';
+                                visibleCount++;
+                            } else {
+                                element.style.display = 'none';
+                            }
+                        });
+
+                        // Actualizare contor produse afișate
+                        document.getElementById('showing-count').textContent = visibleCount;
+                    }
+
+                    // Funcție pentru sortarea instrumentelor
+                    function sortInstruments(direction) {
+                        if (!validateInputs()) {
+                            return; // Oprește execuția dacă inputurile nu sunt valide
+                        }
+
+                        // Obține toate articolele vizibile
+                        const visibleInstruments = allInstruments
+                            .filter(({ element }) => element.style.display !== 'none')
+                            .map(({ element }) => ({
+                                element,
+                                nume: element.getAttribute('data-nume').toLowerCase(),
+                                descLength: parseInt(element.getAttribute('data-desc-length'))
+                            }));
+
+                        // Sortează după nume și lungimea descrierii
+                        visibleInstruments.sort((a, b) => {
+                            // Sortare după nume (prima cheie)
+                            if (a.nume < b.nume) return direction === 'asc' ? -1 : 1;
+                            if (a.nume > b.nume) return direction === 'asc' ? 1 : -1;
+
+                            // Sortare după lungimea descrierii (a doua cheie)
+                            if (a.descLength < b.descLength) return direction === 'asc' ? -1 : 1;
+                            if (a.descLength > b.descLength) return direction === 'asc' ? 1 : -1;
+
+                            return 0;
+                        });
+
+                        // Reordonează DOM-ul
+                        const fragment = document.createDocumentFragment();
+                        visibleInstruments.forEach(({ element }) => {
+                            fragment.appendChild(element);
+                        });
+
+                        instrumentsContainer.innerHTML = '';
+                        instrumentsContainer.appendChild(fragment);
+                    }
+
+                    // Funcție pentru calcularea mediei prețurilor
+                    function calculateAverage() {
+                        if (!validateInputs()) {
+                            return; // Oprește execuția dacă inputurile nu sunt valide
+                        }
+
+                        // Obține toate articolele vizibile
+                        const visibleInstruments = allInstruments
+                            .filter(({ element }) => element.style.display !== 'none')
+                            .map(({ element }) => parseInt(element.getAttribute('data-pret')));
+
+                        if (visibleInstruments.length === 0) {
+                            alert('Nu există instrumente vizibile pentru a calcula media prețurilor!');
+                            return;
+                        }
+
+                        // Calculează media
+                        const sum = visibleInstruments.reduce((acc, price) => acc + price, 0);
+                        const average = sum / visibleInstruments.length;
+
+                        // Creează div-ul pentru afișare
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'calc-result';
+                        resultDiv.textContent = `Media prețurilor: ${average.toLocaleString('ro-RO')} lei`;
+
+                        // Adaugă div-ul în pagină
+                        document.body.appendChild(resultDiv);
+
+                        // Șterge div-ul după 2 secunde
+                        setTimeout(() => {
+                            resultDiv.remove();
+                        }, 2000);
+                    }
+
+                    // Funcție pentru confirmarea resetării filtrelor
+                    function confirmReset() {
+                        if (confirm('Ești sigur că vrei să resetezi toate filtrele?')) {
+                            resetAllFilters();
+                        }
+                    }
+
+                    // Funcție pentru resetarea tuturor filtrelor
+                    function resetAllFilters() {
+                        // Resetare inputuri
+                        document.getElementById('nume-filtru').value = '';
+                        document.getElementById('pret-min-filtru').value = '0';
+                        document.getElementById('pret-max-filtru').value = '10000';
+                        pretMinValue.textContent = '0';
+                        pretMaxValue.textContent = '10000';
+                        document.getElementById('tip-filtru').value = '';
+                        document.querySelector('input[name="an-fabricatie"][value="toate"]').checked = true;
+                        document.getElementById('electric-filtru').checked = false;
+                        document.getElementById('categorie-filtru').value = '';
+                        document.getElementById('cautare-avansata').value = '';
+
+                        // Resetare select multiple
+                        const materialeSelect = document.getElementById('materiale-filtru');
+                        for (let i = 0; i < materialeSelect.options.length; i++) {
+                            materialeSelect.options[i].selected = false;
+                        }
+
+                        // Resetare mesaje de eroare
+                        document.getElementById('nume-filtru-error').textContent = '';
+                        document.getElementById('cautare-avansata-error').textContent = '';
+
+                        // Resetare afișare instrumente la starea inițială
+                        // Sortăm după ordinea inițială
+                        allInstruments.sort((a, b) => a.originalOrder - b.originalOrder);
+
+                        // Reordonează DOM-ul și face toate vizibile
+                        const fragment = document.createDocumentFragment();
+                        allInstruments.forEach(({ element }) => {
+                            element.style.display = 'block';
+                            fragment.appendChild(element);
+                        });
+
+                        instrumentsContainer.innerHTML = '';
+                        instrumentsContainer.appendChild(fragment);
+
+                        // Actualizare contor
+                        document.getElementById('showing-count').textContent = allInstruments.length;
+                    }
+
+                    // Funcție pentru toggle favorite
+                    function toggleFavorite(button, id) {
+                        const icon = button.querySelector('i');
+
+                        if (icon.classList.contains('far')) {
+                            icon.classList.remove('far');
+                            icon.classList.add('fas');
+                            button.classList.add('active');
+
+                            // Salvează în localStorage
+                            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                            if (!favorites.includes(id)) {
+                                favorites.push(id);
+                                localStorage.setItem('favorites', JSON.stringify(favorites));
+                            }
+                        } else {
+                            icon.classList.remove('fas');
+                            icon.classList.add('far');
+                            button.classList.remove('active');
+
+                            // Elimină din localStorage
+                            const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+                            const index = favorites.indexOf(id);
+                            if (index > -1) {
+                                favorites.splice(index, 1);
+                                localStorage.setItem('favorites', JSON.stringify(favorites));
+                            }
+                        }
+                    }
+                });
+            </script>
+</body>
+
+</html>

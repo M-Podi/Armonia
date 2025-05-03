@@ -1,0 +1,115 @@
+// // Variabile pentru customizarea Armonia Bootstrap
+
+// // Schema de culori Armonia
+// $armonia-primary: #1B3B6F; // Albastru închis
+// $armonia-secondary: #C9A227; // Auriu
+// $armonia-light: #F7E6D0; // Crem deschis
+// $armonia-accent: #6D2E46; // Roșu-violet
+// $armonia-neutral: #7C8B7F; // Verde-gri
+
+// // Culorile temei
+// $primary: $armonia-primary;
+// $secondary: $armonia-secondary;
+// $success: adjust-color($armonia-neutral, $lightness: -10%, $saturation: 20%);
+// $info: adjust-color($armonia-primary, $lightness: 20%);
+// $warning: adjust-color($armonia-secondary, $lightness: 10%);
+// $danger: $armonia-accent;
+// $light: $armonia-light;
+// $dark: darken($armonia-primary, 10%);
+
+// // Customizare border radius
+// $border-radius: 0.5rem;
+// $border-radius-sm: 0.3rem;
+// $border-radius-lg: 0.8rem;
+// $border-radius-pill: 50rem;
+
+// // Customizare grosime border
+// $border-width: 2px;
+
+// // Customizare Range Slider
+// $form-range-track-height: 0.5rem;
+// $form-range-thumb-width: calc(1.5 * 1rem); // 50% mai mare decât font-size-ul
+// $form-range-thumb-height: calc(1.5 * 1rem); // 50% mai mare decât font-size-ul
+// $form-range-thumb-bg: $armonia-secondary;
+// $form-range-thumb-border: 0;
+// $form-range-thumb-border-radius: 50%;
+// $form-range-track-bg: lighten($armonia-primary, 30%);
+// $form-range-track-border-radius: 0.3rem;
+
+// // Customizare butoane
+// $btn-padding-y: 0.5rem;
+// $btn-padding-x: 1rem;
+// $btn-font-size: 1rem;
+// $btn-border-width: $border-width;
+
+// // Import Bootstrap - corectarea importului
+// @import "../node_modules/bootstrap/scss/bootstrap";
+
+// // Stiluri pentru tema light/dark
+// :root {
+//   // Tema light (default)
+//   --bg-color: #{$armonia-light};
+//   --text-color: #{$armonia-primary};
+//   --card-bg: #ffffff;
+//   --border-color: #{rgba($armonia-secondary, 0.3)};
+//   --header-bg: #{$armonia-primary};
+//   --header-text: #{$armonia-light};
+// }
+
+// [data-bs-theme="dark"] {
+//   // Tema dark
+//   --bg-color: #{darken($armonia-primary, 15%)};
+//   --text-color: #{$armonia-light};
+//   --card-bg: #{darken($armonia-primary, 10%)};
+//   --border-color: #{rgba($armonia-secondary, 0.5)};
+//   --header-bg: #{darken($armonia-primary, 20%)};
+//   --header-text: #{$armonia-light};
+// }
+
+// // Stiluri generale pentru tema
+// body {
+//   background-color: var(--bg-color);
+//   color: var(--text-color);
+//   transition: background-color 0.3s ease, color 0.3s ease;
+// }
+
+// .card, .instrument-article {
+//   background-color: var(--card-bg);
+//   border-color: var(--border-color);
+//   transition: background-color 0.3s ease, border-color 0.3s ease;
+// }
+
+// header, footer {
+//   background-color: var(--header-bg);
+//   color: var(--header-text);
+//   transition: background-color 0.3s ease;
+// }
+
+// // Alte ajustări specifice pentru tema light/dark
+// [data-bs-theme="dark"] {
+//   .form-control, .form-select {
+//     background-color: rgba(255, 255, 255, 0.1);
+//     color: $armonia-light;
+//     border-color: rgba(255, 255, 255, 0.2);
+//   }
+  
+//   .instrument-description::after {
+//     background: linear-gradient(transparent, var(--card-bg));
+//   }
+  
+//   .btn-outline-primary {
+//     color: $armonia-light;
+//     border-color: $armonia-light;
+//   }
+  
+//   .form-floating label {
+//     color: rgba(255, 255, 255, 0.7);
+//   }
+// }
+
+// // Soluție pentru afișarea doar a icoanelor pe dispozitivele mici
+// @include media-breakpoint-down(md) {
+//   .btn .btn-text {
+//     display: none;
+//   }
+// }
