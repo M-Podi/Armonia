@@ -4,6 +4,27 @@ const path = require('path');
 const fs = require('fs');
 const sharp = require('sharp');
 const sass = require('sass'); // Adăugat modulul sass
+const ejs = require('ejs'); // Adăugat modulul ejs
+
+const Client = require('pg').Client
+
+
+
+
+var client = new Client({
+    database: "tehniciweb",
+    user: "postgres",
+    password: "password",
+    host: "localhost",
+    port: 5432
+});
+client.connect();
+
+
+client.query("SELECT * FROM instrumente", (err, res) => {
+    console.log(err, res);
+})
+
 
 // Crearea unei instanțe a aplicației Express
 const app = express();
