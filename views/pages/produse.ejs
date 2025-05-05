@@ -3,7 +3,9 @@
 
 <head>
     <%- include('../fragments/head') %>
-        <link rel="stylesheet" href="produse.css">
+    <link rel="stylesheet" href="/produse.css">
+    <link rel="stylesheet" href="/comparison.css">
+    <link rel="stylesheet" href="/offers.css">
 </head>
 
 <body>
@@ -215,31 +217,31 @@
                                                         <% if (instrument.materiale && instrument.materiale.length> 0) {
                                                             %>
                                                             <%= instrument.materiale.join(', ') %>
-                                                <% } else { %>
-                                                    Nespecificat
-                                                <% } %>
-                                            </td>
-                                        </tr>
-                                        
-                                        <!-- Caracteristică dată -->
-                                        <tr>
-                                            <td>Data adăugare</td>
-                                            <td>
-                                                <% if (instrument.data_adaugare) { 
-                                                    let data = new Date(instrument.data_adaugare);
-                                                    let zile = [' Duminică', 'Luni' , 'Marți' , 'Miercuri' , 'Joi'
-                                                                , 'Vineri' , 'Sâmbătă' ]; let
-                                                                luni=['Ianuarie', 'Februarie' , 'Martie' , 'Aprilie'
-                                                                , 'Mai' , 'Iunie' , 'Iulie' , 'August' , 'Septembrie'
-                                                                , 'Octombrie' , 'Noiembrie' , 'Decembrie' ]; let
-                                                                formatData=`${data.getDate()}/${luni[data.getMonth()]}/${data.getFullYear()}
-                                                                (${zile[data.getDay()]})`; %>
-                                                                <time datetime="<%= data.toISOString() %>">
-                                                                    <%= formatData %>
-                                                                </time>
-                                                                <% } else { %>
-                                                                    Nespecificat
-                                                                    <% } %>
+                                                        <% } else { %>
+                                                            Nespecificat
+                                                        <% } %>
+                                                    </td>
+                                                </tr>
+                                                
+                                                <!-- Caracteristică dată -->
+                                                <tr>
+                                                    <td>Data adăugare</td>
+                                                    <td>
+                                                        <% if (instrument.data_adaugare) { 
+                                                            let data = new Date(instrument.data_adaugare);
+                                                            let zile = [' Duminică', 'Luni' , 'Marți' , 'Miercuri' , 'Joi'
+                                                                        , 'Vineri' , 'Sâmbătă' ]; let
+                                                                        luni=['Ianuarie', 'Februarie' , 'Martie' , 'Aprilie'
+                                                                        , 'Mai' , 'Iunie' , 'Iulie' , 'August' , 'Septembrie'
+                                                                        , 'Octombrie' , 'Noiembrie' , 'Decembrie' ]; let
+                                                                        formatData=`${data.getDate()}/${luni[data.getMonth()]}/${data.getFullYear()}
+                                                                        (${zile[data.getDay()]})`; %>
+                                                                        <time datetime="<%= data.toISOString() %>">
+                                                                            <%= formatData %>
+                                                                        </time>
+                                                                        <% } else { %>
+                                                                            Nespecificat
+                                                                            <% } %>
                                                     </td>
                                                 </tr>
 
@@ -266,7 +268,7 @@
                                                             <%= instrument.an_fabricatie %>
                                                         </td>
                                                     </tr>
-                                                    <% } %>
+                                                <% } %>
                                             </tbody>
                                         </table>
                                     </div>
@@ -278,10 +280,13 @@
                                             onclick="toggleFavorite(this, <%= instrument.id %>)">
                                             <i class="far fa-heart"></i>
                                         </button>
+                                        <button class="compare-button" onclick="addToComparison('<%= instrument.id %>', '<%= instrument.nume %>')">
+                                            Compară
+                                        </button>
                                     </div>
                                 </article>
-                                <% }); %>
-                                    <% } %>
+                            <% }); %>
+                        <% } %>
                 </div>
 
                 <% if (totalPagini> 1) { %>
@@ -312,7 +317,8 @@
         </main>
 
         <%- include('../fragments/footer') %>
-
+            <script src="/js/comparison.js"></script>
+            <script src="/js/offers.js"></script>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     // Variabile pentru a stoca starea inițială a afișării

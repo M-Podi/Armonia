@@ -1,0 +1,145 @@
+/* Comparison container styles */
+#container-comparare {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 300px;
+    display: none;
+}
+
+#container-comparare.visible {
+    display: block;
+}
+
+#container-comparare h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-light);
+    font-size: 1.2rem;
+}
+
+#container-comparare .product-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+}
+
+#container-comparare .product-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+#container-comparare .product-item:last-child {
+    margin-bottom: 0;
+}
+
+#container-comparare .remove-product {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0.25rem;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+#container-comparare .remove-product:hover {
+    opacity: 1;
+}
+
+#container-comparare .show-comparison {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#container-comparare .show-comparison:hover {
+    background-color: #b18b22;
+}
+
+#container-comparare .show-comparison:disabled {
+    background-color: var(--neutral-color);
+    cursor: not-allowed;
+}
+
+/* Comparison table styles */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.comparison-table th {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    font-weight: bold;
+}
+
+.comparison-table tr:nth-child(even) {
+    background-color: rgba(27, 59, 111, 0.05);
+}
+
+.comparison-table tr:hover {
+    background-color: rgba(27, 59, 111, 0.1);
+}
+
+/* Compare button styles */
+.compare-button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: var(--secondary-color);
+    color: var(--text-light);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin: 0.5rem 0;
+}
+
+.compare-button:hover {
+    background-color: #b18b22;
+}
+
+.compare-button:disabled {
+    background-color: var(--neutral-color);
+    cursor: not-allowed;
+}
+
+.compare-button:disabled:hover::after {
+    content: "ștergeți un produs din lista de comparare";
+    position: absolute;
+    background-color: var(--primary-color);
+    color: var(--text-light);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+} 

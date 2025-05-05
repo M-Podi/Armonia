@@ -21,9 +21,9 @@ var client = new Client({
 client.connect();
 
 
-client.query("SELECT * FROM instrumente", (err, res) => {
-    console.log(err, res);
-})
+// client.query("SELECT * FROM instrumente", (err, res) => {
+//     console.log(err, res);
+// })
 
 
 // Crearea unei instanțe a aplicației Express
@@ -791,6 +791,62 @@ app.get('/detalii-produs/:id', async (req, res) => {
     }
 });
 
+// API endpoint for getting product details
+app.get('/api/products/:id', async (req, res) => {
+    try {
+        const id = parseInt(req.params.id);
+        
+        if (isNaN(id)) {
+            return res.status(400).json({ error: 'ID-ul produsului este invalid.' });
+        }
+        
+        const result = await client.query('SELECT * FROM instrumente WHERE id = $1', [id]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Produsul nu a fost găsit.' });
+        }
+        
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Eroare la obținerea detaliilor produsului:', err);
+        res.status(500).json({ error: 'A apărut o eroare la obținerea detaliilor produsului.' });
+    }
+});
+
+// API endpoint to get all categories
+app.get('/api/categories', async (req, res) => {
+    try {
+        const result = await client.query('SELECT DISTINCT categorie FROM instrumente');
+        const categories = result.rows.map(row => row.categorie);
+        res.json(categories);
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// API endpoint to get current offers
+app.get('/api/offers', (req, res) => {
+    try {
+        const offersData = fs.readFileSync('oferte.json', 'utf8');
+        res.json(JSON.parse(offersData));
+    } catch (error) {
+        console.error('Error reading offers file:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// API endpoint to update offers
+app.post('/api/offers', (req, res) => {
+    try {
+        const offersData = JSON.stringify(req.body, null, 2);
+        fs.writeFileSync('oferte.json', offersData);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error writing offers file:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // Rută generică pentru alte pagini - trebuie să fie ultima
 app.get("/*", (req, res) => {
